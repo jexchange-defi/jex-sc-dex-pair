@@ -38,9 +38,6 @@ pub trait JexScPairContract: liquidity::LiquidityModule {
             "Invalid payment for second token"
         );
 
-        self.first_token_reserve().set(&first_payment.amount);
-        self.second_token_reserve().set(&second_payment.amount);
-
         let (lp_amount, lp_token) =
             self.lp_add_initial_liquidity(&first_payment.amount, &second_payment.amount);
 

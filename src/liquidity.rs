@@ -11,6 +11,9 @@ pub trait LiquidityModule {
     ) -> (BigUint, TokenIdentifier) {
         require!(self.lp_token_supply().get() == 0, "Liquidity already added");
 
+        self.first_token_reserve().set(first_token_amount);
+        self.second_token_reserve().set(second_token_amount);
+
         let lp_amount = first_token_amount.min(second_token_amount).clone();
 
         let lp_token = self.lp_mint(&lp_amount);
