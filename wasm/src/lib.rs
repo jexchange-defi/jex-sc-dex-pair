@@ -5,9 +5,9 @@
 ////////////////////////////////////////////////////
 
 // Init:                                 1
-// Endpoints:                            8
+// Endpoints:                            9
 // Async Callback (empty):               1
-// Total number of exported functions:  10
+// Total number of exported functions:  11
 
 #![no_std]
 #![feature(lang_items)]
@@ -19,6 +19,7 @@ multiversx_sc_wasm_adapter::endpoints! {
     jex_sc_pair
     (
         addInitialLiquidity
+        addLiquidity
         getFirstToken
         getSecondToken
         getWrapScAddress

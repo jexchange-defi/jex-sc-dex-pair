@@ -45,6 +45,43 @@ pub trait JexScPairContract: liquidity::LiquidityModule {
         self.send().direct_esdt(&caller, &lp_token, 0, &lp_amount);
     }
 
+    // public endpoints
+
+    #[payable("*")]
+    #[endpoint(addLiquidity)]
+    fn add_liquidity(&self, min_second_token_amount: BigUint) {
+        let [first_payment, second_payment] = self.call_value().multi_esdt();
+
+        require!(
+            first_payment.token_identifier == self.first_token().get() && first_payment.amount > 0,
+            "Invalid payment for first token"
+        );
+
+        require!(
+            second_payment.token_identifier == self.second_token().get()
+                && second_payment.amount > 0,
+            "Invalid payment for second token"
+        );
+
+        let (lp_amount, lp_token, overpaid_second_token_amount) = self.lp_add_liquidity(
+            &first_payment.amount,
+            &min_second_token_amount,
+            &second_payment.amount,
+        );
+
+        let caller = self.blockchain().get_caller();
+        self.send().direct_esdt(&caller, &lp_token, 0, &lp_amount);
+
+        if overpaid_second_token_amount > 0 {
+            self.send().direct_esdt(
+                &caller,
+                &second_payment.token_identifier,
+                second_payment.token_nonce,
+                &overpaid_second_token_amount,
+            );
+        }
+    }
+
     // storage & views
 
     #[view(getFirstToken)]

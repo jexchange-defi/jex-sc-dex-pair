@@ -21,8 +21,43 @@ pub trait LiquidityModule {
         (lp_amount, lp_token)
     }
 
+    fn lp_add_liquidity(
+        &self,
+        exact_first_token_amount: &BigUint,
+        min_second_token_amount: &BigUint,
+        max_second_token_amount: &BigUint,
+    ) -> (BigUint, TokenIdentifier, BigUint) {
+        let first_token_reserve = self.first_token_reserve().get();
+
+        let exact_second_token_amount =
+            exact_first_token_amount * &self.second_token_reserve().get() / &first_token_reserve;
+
+        require!(
+            &exact_second_token_amount <= max_second_token_amount,
+            "Not enough second tokens"
+        );
+        require!(
+            &exact_second_token_amount >= min_second_token_amount,
+            "Max slippage exceeded"
+        );
+
+        self.first_token_reserve()
+            .update(|x| *x += exact_first_token_amount);
+        self.second_token_reserve()
+            .update(|x| *x += &exact_second_token_amount);
+
+        let lp_amount =
+            exact_first_token_amount * &self.lp_token_supply().get() / &first_token_reserve;
+
+        let lp_token = self.lp_mint(&lp_amount);
+
+        let overpaid_second_token_amount = max_second_token_amount - &exact_second_token_amount;
+
+        (lp_amount, lp_token, overpaid_second_token_amount)
+    }
+
     fn lp_mint(&self, amount: &BigUint) -> TokenIdentifier {
-        self.lp_token_supply().set(amount);
+        self.lp_token_supply().update(|x| *x += amount);
 
         let lp_token = self.lp_token().get();
         self.send().esdt_local_mint(&lp_token, 0, amount);
