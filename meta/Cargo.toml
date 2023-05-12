@@ -1,0 +1,14 @@
+[package]
+name = "jex-sc-pair-meta"
+version = "0.0.0"
+edition = "2018"
+publish = false
+authors = [ "you",]
+
+[dev-dependencies]
+
+[dependencies.jex-sc-pair]
+path = ".."
+
+[dependencies.multiversx-sc-meta]
+version = "0.41.0"

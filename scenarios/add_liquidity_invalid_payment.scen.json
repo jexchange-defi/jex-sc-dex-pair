@@ -1,0 +1,78 @@
+{
+  "steps": [
+    {
+      "step": "externalSteps",
+      "path": "init.scen.json"
+    },
+    {
+      "step": "setState",
+      "accounts": {
+        "address:owner": {
+          "nonce": "0",
+          "balance": "0",
+          "esdt": {
+            "str:JEX-000000": "1000,000000000000000000",
+            "str:XXX-000000": "1000,000000000000000000",
+            "str:WEGLD-000000": "1,000000000000000000"
+          }
+        }
+      }
+    },
+    {
+      "step": "scCall",
+      "txId": "firstTokenInvalidToken",
+      "tx": {
+        "from": "address:owner",
+        "to": "sc:pair",
+        "function": "addInitialLiquidity",
+        "esdtValue": [
+          {
+            "tokenIdentifier": "str:XXX-000000",
+            "value": "1000,000000000000000000"
+          },
+          {
+            "tokenIdentifier": "str:WEGLD-000000",
+            "value": "1,000000000000000000"
+          }
+        ],
+        "arguments": [],
+        "gasLimit": "10,000,000",
+        "gasPrice": "0"
+      },
+      "expect": {
+        "status": "4",
+        "message": "str:Invalid payment for first token",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "txId": "secondTokenInvalidToken",
+      "tx": {
+        "from": "address:owner",
+        "to": "sc:pair",
+        "function": "addInitialLiquidity",
+        "esdtValue": [
+          {
+            "tokenIdentifier": "str:JEX-000000",
+            "value": "1000,000000000000000000"
+          },
+          {
+            "tokenIdentifier": "str:XXX-000000",
+            "value": "1,000000000000000000"
+          }
+        ],
+        "arguments": [],
+        "gasLimit": "10,000,000",
+        "gasPrice": "0"
+      },
+      "expect": {
+        "status": "4",
+        "message": "str:Invalid payment for second token",
+        "gas": "*",
+        "refund": "*"
+      }
+    }
+  ]
+}
