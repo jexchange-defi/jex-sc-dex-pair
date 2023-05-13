@@ -82,6 +82,38 @@ pub trait JexScPairContract: liquidity::LiquidityModule {
         }
     }
 
+    #[payable("*")]
+    #[endpoint(removeLiquidity)]
+    fn remove_liquidity(&self, min_first_token_amount: BigUint, min_second_token_amount: BigUint) {
+        let (lp_token_identifier, lp_amount) = self.call_value().single_fungible_esdt();
+
+        let (exact_first_token_amount, exact_second_token_amount) =
+            self.lp_remove_liquidity(lp_token_identifier, lp_amount);
+
+        require!(
+            exact_first_token_amount >= min_first_token_amount,
+            "Max slippage exceeded for first token"
+        );
+        require!(
+            exact_second_token_amount >= min_second_token_amount,
+            "Max slippage exceeded for second token"
+        );
+
+        let caller = self.blockchain().get_caller();
+        self.send().direct_esdt(
+            &caller,
+            &self.first_token().get(),
+            0,
+            &exact_first_token_amount,
+        );
+        self.send().direct_esdt(
+            &caller,
+            &self.second_token().get(),
+            0,
+            &exact_second_token_amount,
+        );
+    }
+
     // storage & views
 
     #[view(getFirstToken)]
