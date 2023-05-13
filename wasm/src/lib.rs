@@ -5,9 +5,9 @@
 ////////////////////////////////////////////////////
 
 // Init:                                 1
-// Endpoints:                           10
+// Endpoints:                           15
 // Async Callback (empty):               1
-// Total number of exported functions:  12
+// Total number of exported functions:  17
 
 #![no_std]
 #![feature(lang_items)]
@@ -19,11 +19,16 @@ multiversx_sc_wasm_adapter::endpoints! {
     jex_sc_pair
     (
         addInitialLiquidity
+        configureLiqProvidersFees
+        configurePlatformFees
         addLiquidity
         removeLiquidity
         getFirstToken
         getSecondToken
         getWrapScAddress
+        getLiqProvidersFees
+        getPlatformFees
+        getPlatformFeesReceiver
         getFirstTokenReserve
         getSecondTokenReserve
         getLpToken

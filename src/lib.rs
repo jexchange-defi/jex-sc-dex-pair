@@ -2,11 +2,12 @@
 
 multiversx_sc::imports!();
 
+mod fees;
 mod liquidity;
 mod wrap_sc_proxy;
 
 #[multiversx_sc::contract]
-pub trait JexScPairContract: liquidity::LiquidityModule {
+pub trait JexScPairContract: fees::FeesModule + liquidity::LiquidityModule {
     #[init]
     fn init(
         &self,
@@ -43,6 +44,23 @@ pub trait JexScPairContract: liquidity::LiquidityModule {
 
         let caller = self.blockchain().get_caller();
         self.send().direct_esdt(&caller, &lp_token, 0, &lp_amount);
+    }
+
+    /// Configure liquidity providers swap fees
+    /// 100 = 1%
+    #[only_owner]
+    #[endpoint(configureLiqProvidersFees)]
+    fn configure_liq_providers_fees(&self, fees: u32) {
+        self.liq_providers_fees().set(fees);
+    }
+
+    /// Configure platform swap fees
+    /// 100 = 1%
+    #[only_owner]
+    #[endpoint(configurePlatformFees)]
+    fn configure_platform_fees(&self, fees: u32, receiver: ManagedAddress) {
+        self.platform_fees().set(fees);
+        self.platform_fees_receiver().set(&receiver);
     }
 
     // public endpoints
