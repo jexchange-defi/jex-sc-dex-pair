@@ -1,7 +1,28 @@
 multiversx_sc::imports!();
 
-#[multiversx_sc::contract]
+#[multiversx_sc::module]
 pub trait FeesModule {
+    // functions
+
+    fn calculate_liq_providers_fee(&self, amount: &BigUint) -> BigUint {
+        return amount * self.liq_providers_fees().get() / 10000u32;
+    }
+
+    fn calculate_and_send_platform_fee(
+        &self,
+        token: &TokenIdentifier,
+        amount: &BigUint,
+    ) -> BigUint {
+        let fee: BigUint = amount * self.platform_fees().get() / 10000u32;
+
+        if fee > 0 {
+            self.send()
+                .direct_esdt(&self.platform_fees_receiver().get(), token, 0, &fee);
+        }
+
+        fee
+    }
+
     // storage & views
 
     #[view(getLiqProvidersFees)]
