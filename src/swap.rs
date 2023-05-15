@@ -24,18 +24,11 @@ pub trait SwapModule: crate::fees::FeesModule + crate::liquidity::LiquidityModul
         token_out: &TokenIdentifier,
         is_first_token_in: bool,
     ) -> EsdtTokenPayment {
-        let (in_reserve_mapper, out_reserve_mapper) = if is_first_token_in {
-            (self.first_token_reserve(), self.second_token_reserve())
-        } else {
-            (self.second_token_reserve(), self.first_token_reserve())
-        };
-
         let estimation = self.estimate_amount_out_inner(amount_in, is_first_token_in);
 
         let diff_out_reserve = estimation.amount_out - estimation.liq_providers_fee;
 
-        in_reserve_mapper.update(|x| *x += amount_in);
-        out_reserve_mapper.update(|x| *x -= &diff_out_reserve);
+        self.lp_update_reserves(amount_in, &diff_out_reserve, is_first_token_in);
 
         self.send_platform_fee(token_out, &estimation.platform_fee);
 

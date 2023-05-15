@@ -9,5 +9,8 @@ fn world() -> ScenarioWorld {
 
 #[test]
 fn empty_rs() {
-    multiversx_sc_scenario::run_rs("scenarios/swap_fo_first_to_second.scen.json", world());
+    multiversx_sc_scenario::run_rs(
+        "scenarios/remove_liquidity_not_enough_liquidity.scen.json",
+        world(),
+    );
 }

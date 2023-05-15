@@ -1,5 +1,7 @@
 multiversx_sc::imports!();
 
+const MIN_LIQUIDITY: u32 = 10000u32;
+
 #[multiversx_sc::module]
 pub trait LiquidityModule {
     // functions
@@ -13,6 +15,8 @@ pub trait LiquidityModule {
 
         self.first_token_reserve().set(first_token_amount);
         self.second_token_reserve().set(second_token_amount);
+
+        self.require_enough_liquidity();
 
         let lp_amount = first_token_amount.min(second_token_amount).clone();
 
@@ -94,9 +98,50 @@ pub trait LiquidityModule {
         self.second_token_reserve()
             .update(|x| *x -= &exact_second_token_amount);
 
+        // prevent removing all liquidity
+        self.require_enough_liquidity();
+
         self.lp_burn(&lp_amount);
 
         (exact_first_token_amount, exact_second_token_amount)
+    }
+
+    fn lp_update_reserves(
+        &self,
+        amount_in: &BigUint,
+        amount_out: &BigUint,
+        is_first_token_in: bool,
+    ) {
+        let (in_reserve_mapper, out_reserve_mapper) = if is_first_token_in {
+            (self.first_token_reserve(), self.second_token_reserve())
+        } else {
+            (self.second_token_reserve(), self.first_token_reserve())
+        };
+
+        in_reserve_mapper.update(|x| *x += amount_in);
+        out_reserve_mapper.update(|x| *x -= amount_out);
+
+        // prevent draining all of one reserve
+        self.require_enough_liquidity();
+    }
+
+    fn require_enough_liquidity(&self) {
+        sc_print!(
+            "self.first_token_reserve().get(): {}",
+            self.first_token_reserve().get()
+        );
+        sc_print!(
+            "self.second_token_reserve().get(): {}",
+            self.second_token_reserve().get()
+        );
+        require!(
+            self.first_token_reserve().get() >= MIN_LIQUIDITY,
+            "Not enough liquidity for first token"
+        );
+        require!(
+            self.second_token_reserve().get() >= MIN_LIQUIDITY,
+            "Not enough liquidity for second token"
+        );
     }
 
     // storage & views
