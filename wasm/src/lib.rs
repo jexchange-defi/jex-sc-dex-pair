@@ -5,9 +5,9 @@
 ////////////////////////////////////////////////////
 
 // Init:                                 1
-// Endpoints:                           16
+// Endpoints:                           17
 // Async Callback (empty):               1
-// Total number of exported functions:  18
+// Total number of exported functions:  19
 
 #![no_std]
 #![feature(lang_items)]
@@ -24,6 +24,7 @@ multiversx_sc_wasm_adapter::endpoints! {
         addLiquidity
         removeLiquidity
         swapTokensFixedInput
+        estimateAmountOut
         getFirstToken
         getSecondToken
         getWrapScAddress

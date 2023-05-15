@@ -160,9 +160,6 @@ pub trait JexScPairContract:
         let payment_out =
             self.swap_tokens_fixed_input_inner(&amount_in, &token_out, is_first_token_in);
 
-        sc_print!("payment_out.amount: {}", payment_out.amount);
-        sc_print!("min_amount_out: {}", min_amount_out);
-
         require!(
             payment_out.amount >= min_amount_out,
             "Max slippage exceeded"
@@ -178,6 +175,28 @@ pub trait JexScPairContract:
     }
 
     // storage & views
+
+    #[view(estimateAmountOut)]
+    fn estimate_amount_out(
+        &self,
+        token_in: TokenIdentifier,
+        amount_in: BigUint,
+    ) -> swap::EstimeAmountOut<Self::Api> {
+        let first_token = self.first_token().get();
+        let second_token = self.second_token().get();
+
+        let is_first_token_in = token_in == first_token;
+        let is_second_token_in = token_in == second_token;
+
+        require!(
+            is_first_token_in || is_second_token_in,
+            "Invalid payment token"
+        );
+
+        let estimation = self.estimate_amount_out_inner(&amount_in, is_first_token_in);
+
+        estimation
+    }
 
     #[view(getFirstToken)]
     #[storage_mapper("first_token")]

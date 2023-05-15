@@ -8,19 +8,17 @@ pub trait FeesModule {
         return amount * self.liq_providers_fees().get() / 10000u32;
     }
 
-    fn calculate_and_send_platform_fee(
-        &self,
-        token: &TokenIdentifier,
-        amount: &BigUint,
-    ) -> BigUint {
+    fn calculate_platform_fee(&self, amount: &BigUint) -> BigUint {
         let fee: BigUint = amount * self.platform_fees().get() / 10000u32;
 
-        if fee > 0 {
-            self.send()
-                .direct_esdt(&self.platform_fees_receiver().get(), token, 0, &fee);
-        }
-
         fee
+    }
+
+    fn send_platform_fee(&self, token: &TokenIdentifier, fee: &BigUint) {
+        if fee > &0 {
+            self.send()
+                .direct_esdt(&self.platform_fees_receiver().get(), token, 0, fee);
+        }
     }
 
     // storage & views
