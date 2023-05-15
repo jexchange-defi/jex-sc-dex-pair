@@ -21,6 +21,13 @@ pub trait FeesModule {
         }
     }
 
+    fn unapply_fees(&self, net_amount: &BigUint) -> BigUint {
+        let amount = (net_amount * 10000u32)
+            / (10000u32 - self.platform_fees().get() - self.liq_providers_fees().get());
+
+        amount
+    }
+
     // storage & views
 
     #[view(getLiqProvidersFees)]

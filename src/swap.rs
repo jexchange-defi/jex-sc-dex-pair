@@ -2,6 +2,11 @@ multiversx_sc::imports!();
 multiversx_sc::derive_imports!();
 
 #[derive(TopEncode, TopDecode, TypeAbi)]
+pub struct EstimeAmountIn<M: ManagedTypeApi> {
+    amount_in: BigUint<M>,
+}
+
+#[derive(TopEncode, TopDecode, TypeAbi)]
 pub struct EstimeAmountOut<M: ManagedTypeApi> {
     net_amount_out: BigUint<M>,
     amount_out: BigUint<M>,
@@ -35,6 +40,34 @@ pub trait SwapModule: crate::fees::FeesModule + crate::liquidity::LiquidityModul
         self.send_platform_fee(token_out, &estimation.platform_fee);
 
         EsdtTokenPayment::new(token_out.clone(), 0, estimation.net_amount_out)
+    }
+
+    fn estimate_amount_in_inner(
+        &self,
+        net_amount_out: &BigUint,
+        is_first_token_out: bool,
+    ) -> EstimeAmountIn<Self::Api> {
+        let (in_reserve_before, out_reserve_before) = if is_first_token_out {
+            (
+                self.second_token_reserve().get(),
+                self.first_token_reserve().get(),
+            )
+        } else {
+            (
+                self.first_token_reserve().get(),
+                self.second_token_reserve().get(),
+            )
+        };
+
+        let amount_out = self.unapply_fees(&net_amount_out);
+
+        let amount_in = amount_out * &in_reserve_before / &out_reserve_before;
+
+        require!(amount_in < in_reserve_before, "Not enough liquidity");
+
+        let estimation = EstimeAmountIn { amount_in };
+
+        estimation
     }
 
     fn estimate_amount_out_inner(

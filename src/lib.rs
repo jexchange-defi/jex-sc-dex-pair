@@ -176,6 +176,28 @@ pub trait JexScPairContract:
 
     // storage & views
 
+    #[view(estimateAmountIn)]
+    fn estimate_amount_in(
+        &self,
+        token_out: TokenIdentifier,
+        amount_out: BigUint,
+    ) -> swap::EstimeAmountIn<Self::Api> {
+        let first_token = self.first_token().get();
+        let second_token = self.second_token().get();
+
+        let is_first_token_out = token_out == first_token;
+        let is_second_token_out = token_out == second_token;
+
+        require!(
+            is_first_token_out || is_second_token_out,
+            "Invalid payment token"
+        );
+
+        let estimation = self.estimate_amount_in_inner(&amount_out, is_first_token_out);
+
+        estimation
+    }
+
     #[view(estimateAmountOut)]
     fn estimate_amount_out(
         &self,
