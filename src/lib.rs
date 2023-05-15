@@ -218,7 +218,7 @@ pub trait JexScPairContract:
         &self,
         token_out: TokenIdentifier,
         amount_out: BigUint,
-    ) -> swap::EstimeAmountIn<Self::Api> {
+    ) -> swap::EstimateAmountIn<Self::Api> {
         let first_token = self.first_token().get();
         let second_token = self.second_token().get();
 
@@ -242,7 +242,7 @@ pub trait JexScPairContract:
         &self,
         token_in: TokenIdentifier,
         amount_in: BigUint,
-    ) -> swap::EstimeAmountOut<Self::Api> {
+    ) -> swap::EstimateAmountOut<Self::Api> {
         let first_token = self.first_token().get();
         let second_token = self.second_token().get();
 

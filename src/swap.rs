@@ -2,12 +2,12 @@ multiversx_sc::imports!();
 multiversx_sc::derive_imports!();
 
 #[derive(TopEncode, TopDecode, TypeAbi)]
-pub struct EstimeAmountIn<M: ManagedTypeApi> {
+pub struct EstimateAmountIn<M: ManagedTypeApi> {
     amount_in: BigUint<M>,
 }
 
 #[derive(TopEncode, TopDecode, TypeAbi)]
-pub struct EstimeAmountOut<M: ManagedTypeApi> {
+pub struct EstimateAmountOut<M: ManagedTypeApi> {
     net_amount_out: BigUint<M>,
     amount_out: BigUint<M>,
     liq_providers_fee: BigUint<M>,
@@ -74,7 +74,7 @@ pub trait SwapModule: crate::fees::FeesModule + crate::liquidity::LiquidityModul
         &self,
         net_amount_out: &BigUint,
         is_first_token_in: bool,
-    ) -> EstimeAmountIn<Self::Api> {
+    ) -> EstimateAmountIn<Self::Api> {
         let (in_reserve_before, out_reserve_before) = if is_first_token_in {
             (
                 self.first_token_reserve().get(),
@@ -93,7 +93,7 @@ pub trait SwapModule: crate::fees::FeesModule + crate::liquidity::LiquidityModul
 
         require!(amount_in < in_reserve_before, "Not enough liquidity");
 
-        let estimation = EstimeAmountIn { amount_in };
+        let estimation = EstimateAmountIn { amount_in };
 
         estimation
     }
@@ -102,7 +102,7 @@ pub trait SwapModule: crate::fees::FeesModule + crate::liquidity::LiquidityModul
         &self,
         amount_in: &BigUint,
         is_first_token_in: bool,
-    ) -> EstimeAmountOut<Self::Api> {
+    ) -> EstimateAmountOut<Self::Api> {
         let (in_reserve_before, out_reserve_before) = if is_first_token_in {
             (
                 self.first_token_reserve().get(),
@@ -122,7 +122,7 @@ pub trait SwapModule: crate::fees::FeesModule + crate::liquidity::LiquidityModul
         let liq_providers_fee = self.calculate_liq_providers_fee(&amount_out);
         let platform_fee = self.calculate_platform_fee(&amount_out);
 
-        let estimation = EstimeAmountOut {
+        let estimation = EstimateAmountOut {
             amount_out: amount_out.clone(),
             net_amount_out: &amount_out - &liq_providers_fee - &platform_fee,
             liq_providers_fee,
