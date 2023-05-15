@@ -42,26 +42,54 @@ pub trait SwapModule: crate::fees::FeesModule + crate::liquidity::LiquidityModul
         EsdtTokenPayment::new(token_out.clone(), 0, estimation.net_amount_out)
     }
 
+    fn swap_tokens_fixed_output_inner(
+        &self,
+        exact_amount_out: &BigUint,
+        token_out: &TokenIdentifier,
+        is_first_token_in: bool,
+    ) -> BigUint {
+        let estimation = self.estimate_amount_in_inner(exact_amount_out, is_first_token_in);
+
+        let exact_amount_in = estimation.amount_in;
+        self.swap_tokens_fixed_input_inner(&exact_amount_in, token_out, is_first_token_in);
+
+        exact_amount_in
+    }
+
+    fn ceil_div(&self, a: &BigUint, b: &BigUint) -> BigUint {
+        if b == &0 {
+            return BigUint::zero();
+        }
+
+        let res = if &a.div(b).mul(b) == a {
+            a.div(b)
+        } else {
+            a.div(b) + 1u32
+        };
+
+        res
+    }
+
     fn estimate_amount_in_inner(
         &self,
         net_amount_out: &BigUint,
-        is_first_token_out: bool,
+        is_first_token_in: bool,
     ) -> EstimeAmountIn<Self::Api> {
-        let (in_reserve_before, out_reserve_before) = if is_first_token_out {
+        let (in_reserve_before, out_reserve_before) = if is_first_token_in {
             (
-                self.second_token_reserve().get(),
                 self.first_token_reserve().get(),
+                self.second_token_reserve().get(),
             )
         } else {
             (
-                self.first_token_reserve().get(),
                 self.second_token_reserve().get(),
+                self.first_token_reserve().get(),
             )
         };
 
         let amount_out = self.unapply_fees(&net_amount_out);
 
-        let amount_in = amount_out * &in_reserve_before / &out_reserve_before;
+        let amount_in = self.ceil_div(&(&amount_out * &in_reserve_before), &out_reserve_before);
 
         require!(amount_in < in_reserve_before, "Not enough liquidity");
 

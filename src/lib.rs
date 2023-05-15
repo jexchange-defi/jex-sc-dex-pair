@@ -174,6 +174,43 @@ pub trait JexScPairContract:
         );
     }
 
+    #[payable("*")]
+    #[endpoint(swapTokensFixedOutput)]
+    fn swap_tokens_fixed_output(&self, exact_amount_out: BigUint) {
+        let (token_in, amount_in) = self.call_value().single_fungible_esdt();
+
+        let first_token = self.first_token().get();
+        let second_token = self.second_token().get();
+
+        let is_first_token_in = token_in == first_token;
+        let is_second_token_in = token_in == second_token;
+
+        require!(
+            is_first_token_in || is_second_token_in,
+            "Invalid payment token"
+        );
+
+        let token_out = if is_first_token_in {
+            second_token
+        } else {
+            first_token
+        };
+
+        let exact_amount_in =
+            self.swap_tokens_fixed_output_inner(&exact_amount_out, &token_out, is_first_token_in);
+
+        require!(exact_amount_in <= amount_in, "Max slippage exceeded");
+
+        let caller = self.blockchain().get_caller();
+        self.send()
+            .direct_esdt(&caller, &token_out, 0, &exact_amount_out);
+
+        if amount_in > exact_amount_in {
+            self.send()
+                .direct_esdt(&caller, &token_in, 0, &(amount_in - exact_amount_in));
+        }
+    }
+
     // storage & views
 
     #[view(estimateAmountIn)]
@@ -193,7 +230,9 @@ pub trait JexScPairContract:
             "Invalid payment token"
         );
 
-        let estimation = self.estimate_amount_in_inner(&amount_out, is_first_token_out);
+        let is_first_token_in = !is_first_token_out;
+
+        let estimation = self.estimate_amount_in_inner(&amount_out, is_first_token_in);
 
         estimation
     }
