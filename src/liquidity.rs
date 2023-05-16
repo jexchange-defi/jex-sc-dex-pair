@@ -126,14 +126,6 @@ pub trait LiquidityModule {
     }
 
     fn require_enough_liquidity(&self) {
-        sc_print!(
-            "self.first_token_reserve().get(): {}",
-            self.first_token_reserve().get()
-        );
-        sc_print!(
-            "self.second_token_reserve().get(): {}",
-            self.second_token_reserve().get()
-        );
         require!(
             self.first_token_reserve().get() >= MIN_LIQUIDITY,
             "Not enough liquidity for first token"
