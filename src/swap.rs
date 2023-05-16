@@ -82,7 +82,12 @@ pub trait SwapModule: crate::fees::FeesModule + crate::liquidity::LiquidityModul
 
         let amount_out = self.unapply_fees(&net_amount_out);
 
-        let amount_in = self.ceil_div(&(&amount_out * &in_reserve_before), &out_reserve_before);
+        require!(amount_out < out_reserve_before, "Not enough liquidity");
+
+        let amount_in = self.ceil_div(
+            &(&amount_out * &in_reserve_before),
+            &(out_reserve_before - amount_out),
+        );
 
         require!(amount_in < in_reserve_before, "Not enough liquidity");
 
@@ -108,7 +113,7 @@ pub trait SwapModule: crate::fees::FeesModule + crate::liquidity::LiquidityModul
             )
         };
 
-        let amount_out = amount_in * &out_reserve_before / &in_reserve_before;
+        let amount_out = (amount_in * &out_reserve_before) / (&in_reserve_before + amount_in);
 
         require!(amount_out < out_reserve_before, "Not enough liquidity");
 

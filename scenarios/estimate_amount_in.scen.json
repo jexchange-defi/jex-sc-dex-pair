@@ -46,7 +46,7 @@
         "arguments": ["str:WEGLD-000000", "0,993000000000000000"]
       },
       "expect": {
-        "out": ["biguint:10000,000000000000000000"]
+        "out": ["biguint:15000,000000000000000000"]
       }
     },
     {
@@ -54,10 +54,10 @@
       "tx": {
         "to": "sc:pair",
         "function": "estimateAmountIn",
-        "arguments": ["str:WEGLD-000000", "1,489500000000000000"]
+        "arguments": ["str:WEGLD-000000", "0,496500000000000000"]
       },
       "expect": {
-        "out": ["biguint:15000,000000000000000000"]
+        "out": ["biguint:6000,000000000000000000"]
       }
     }
   ]

@@ -14,8 +14,8 @@
       "expect": {
         "out": [
           {
-            "1-net_amount_out": "biguint:1,000000000000000000",
-            "2-amount_out": "biguint:1,000000000000000000",
+            "1-net_amount_out": "biguint:0,750000000000000000",
+            "2-amount_out": "biguint:0,750000000000000000",
             "3-liq_providers_fee": "biguint:0",
             "4-platform_fee": "biguint:0"
           }
@@ -32,8 +32,8 @@
       "expect": {
         "out": [
           {
-            "1-net_amount_out": "biguint:0,300000000000000000",
-            "2-amount_out": "biguint:0,300000000000000000",
+            "1-net_amount_out": "biguint:0,272727272727272727",
+            "2-amount_out": "biguint:0,272727272727272727",
             "3-liq_providers_fee": "biguint:0",
             "4-platform_fee": "biguint:0"
           }

@@ -48,10 +48,10 @@
       "expect": {
         "out": [
           {
-            "1-net_amount_out": "biguint:0,993000000000000000",
-            "2-amount_out": "biguint:1,000000000000000000",
-            "3-liq_providers_fee": "biguint:0,005000000000000000",
-            "4-platform_fee": "biguint:0,002000000000000000"
+            "1-net_amount_out": "biguint:0,744750000000000000",
+            "2-amount_out": "biguint:0,750000000000000000",
+            "3-liq_providers_fee": "biguint:0,003750000000000000",
+            "4-platform_fee": "biguint:0,001500000000000000"
           }
         ]
       }
