@@ -1,6 +1,15 @@
 multiversx_sc::imports!();
+multiversx_sc::derive_imports!();
 
 const MIN_LIQUIDITY: u32 = 10000u32;
+
+#[derive(TopEncode, TopDecode, TypeAbi)]
+pub struct EstimateAddLiquidityOut<M: ManagedTypeApi> {
+    lp_amount: BigUint<M>,
+    lp_supply: BigUint<M>,
+    eq_first_tokens: BigUint<M>,
+    eq_second_tokens: BigUint<M>,
+}
 
 #[multiversx_sc::module]
 pub trait LiquidityModule {
@@ -66,30 +75,28 @@ pub trait LiquidityModule {
         min_other_token_amount: &BigUint,
         is_first_token_in: bool,
     ) -> (BigUint, TokenIdentifier) {
-        let (in_reserve_mapper, other_reserve_mapper) = if is_first_token_in {
-            (self.first_token_reserve(), self.second_token_reserve())
+        let estimation = self.lp_estimate_add_liquidity_single(amount_in, is_first_token_in);
+
+        let other_token_amount = if is_first_token_in {
+            estimation.eq_second_tokens
         } else {
-            (self.second_token_reserve(), self.first_token_reserve())
+            estimation.eq_first_tokens
         };
-
-        let lp_supply_before = self.lp_token_supply().get();
-
-        let lp_amount = (amount_in * &lp_supply_before) / (&in_reserve_mapper.get() * 2u32);
-
-        let lp_token = self.lp_mint(&lp_amount);
-
-        let lp_supply_after = self.lp_token_supply().get();
-
-        let other_token_amount = (&lp_amount * &other_reserve_mapper.get()) / &lp_supply_after;
 
         require!(
             &other_token_amount >= min_other_token_amount,
             "Max slippage exceeded"
         );
 
-        in_reserve_mapper.update(|x| *x += amount_in);
+        if is_first_token_in {
+            self.first_token_reserve().update(|x| *x += amount_in);
+        } else {
+            self.second_token_reserve().update(|x| *x += amount_in);
+        }
 
-        (lp_amount, lp_token)
+        let lp_token = self.lp_mint(&estimation.lp_amount);
+
+        (estimation.lp_amount, lp_token)
     }
 
     fn lp_burn(&self, amount: &BigUint) {
@@ -97,6 +104,52 @@ pub trait LiquidityModule {
 
         let lp_token = self.lp_token().get();
         self.send().esdt_local_burn(&lp_token, 0, amount);
+    }
+
+    fn lp_estimate_add_liquidity_single(
+        &self,
+        amount_in: &BigUint,
+        is_first_token_in: bool,
+    ) -> EstimateAddLiquidityOut<Self::Api> {
+        let (in_reserve, other_reserve) = if is_first_token_in {
+            (
+                self.first_token_reserve().get(),
+                self.second_token_reserve().get(),
+            )
+        } else {
+            (
+                self.second_token_reserve().get(),
+                self.first_token_reserve().get(),
+            )
+        };
+
+        let in_reserve_after = &in_reserve + amount_in;
+
+        let lp_supply_before = self.lp_token_supply().get();
+
+        let lp_amount = (amount_in * &lp_supply_before) / (&in_reserve * 2u32);
+
+        let lp_supply_after = &lp_supply_before + &lp_amount;
+
+        let eq_amount_in = (&lp_amount * &in_reserve_after) / &lp_supply_after;
+        let eq_amount_other = (&lp_amount * &other_reserve) / &lp_supply_after;
+
+        let estimation = EstimateAddLiquidityOut {
+            lp_amount,
+            lp_supply: lp_supply_after,
+            eq_first_tokens: if is_first_token_in {
+                eq_amount_in.clone()
+            } else {
+                eq_amount_other.clone()
+            },
+            eq_second_tokens: if is_first_token_in {
+                eq_amount_other.clone()
+            } else {
+                eq_amount_in.clone()
+            },
+        };
+
+        estimation
     }
 
     fn lp_mint(&self, amount: &BigUint) -> TokenIdentifier {

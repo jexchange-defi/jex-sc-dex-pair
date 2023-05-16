@@ -288,6 +288,28 @@ pub trait JexScPairContract:
         estimation
     }
 
+    #[view(estimateAddLiquiditySingle)]
+    fn estimate_add_liquidity_single(
+        &self,
+        token_in: TokenIdentifier,
+        amount_in: BigUint,
+    ) -> liquidity::EstimateAddLiquidityOut<Self::Api> {
+        let first_token = self.first_token().get();
+        let second_token = self.second_token().get();
+
+        let is_first_token_in = token_in == first_token;
+        let is_second_token_in = token_in == second_token;
+
+        require!(
+            is_first_token_in || is_second_token_in,
+            "Invalid payment token"
+        );
+
+        let estimation = self.lp_estimate_add_liquidity_single(&amount_in, is_first_token_in);
+
+        estimation
+    }
+
     #[view(getFirstToken)]
     #[storage_mapper("first_token")]
     fn first_token(&self) -> SingleValueMapper<TokenIdentifier>;
