@@ -108,7 +108,11 @@ pub trait JexScPairContract:
     /// payment = token to deposit
     #[payable("*")]
     #[endpoint(addLiquiditySingle)]
-    fn add_liquidity_single(&self, min_other_token_amount: BigUint) {
+    fn add_liquidity_single(
+        &self,
+        min_first_token_amount: BigUint,
+        min_second_token_amount: BigUint,
+    ) {
         let (token_identifier, payment_amount) = self.call_value().single_fungible_esdt();
 
         let first_token = self.first_token().get();
@@ -124,7 +128,8 @@ pub trait JexScPairContract:
 
         let (lp_amount, lp_token) = self.lp_add_liquidity_single_side(
             &payment_amount,
-            &min_other_token_amount,
+            &min_first_token_amount,
+            &min_second_token_amount,
             is_first_token_in,
         );
 

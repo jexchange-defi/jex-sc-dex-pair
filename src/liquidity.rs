@@ -72,19 +72,19 @@ pub trait LiquidityModule {
     fn lp_add_liquidity_single_side(
         &self,
         amount_in: &BigUint,
-        min_other_token_amount: &BigUint,
+        min_first_token_amount: &BigUint,
+        min_second_token_amount: &BigUint,
         is_first_token_in: bool,
     ) -> (BigUint, TokenIdentifier) {
         let estimation = self.lp_estimate_add_liquidity_single(amount_in, is_first_token_in);
 
-        let other_token_amount = if is_first_token_in {
-            estimation.eq_second_tokens
-        } else {
-            estimation.eq_first_tokens
-        };
+        require!(
+            &estimation.eq_first_tokens >= min_first_token_amount,
+            "Max slippage exceeded"
+        );
 
         require!(
-            &other_token_amount >= min_other_token_amount,
+            &estimation.eq_second_tokens >= min_second_token_amount,
             "Max slippage exceeded"
         );
 
