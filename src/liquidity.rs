@@ -60,6 +60,38 @@ pub trait LiquidityModule {
         (lp_amount, lp_token, overpaid_second_token_amount)
     }
 
+    fn lp_add_liquidity_single_side(
+        &self,
+        amount_in: &BigUint,
+        min_other_token_amount: &BigUint,
+        is_first_token_in: bool,
+    ) -> (BigUint, TokenIdentifier) {
+        let (in_reserve_mapper, other_reserve_mapper) = if is_first_token_in {
+            (self.first_token_reserve(), self.second_token_reserve())
+        } else {
+            (self.second_token_reserve(), self.first_token_reserve())
+        };
+
+        let lp_supply_before = self.lp_token_supply().get();
+
+        let lp_amount = (amount_in * &lp_supply_before) / (&in_reserve_mapper.get() * 2u32);
+
+        let lp_token = self.lp_mint(&lp_amount);
+
+        let lp_supply_after = self.lp_token_supply().get();
+
+        let other_token_amount = (&lp_amount * &other_reserve_mapper.get()) / &lp_supply_after;
+
+        require!(
+            &other_token_amount >= min_other_token_amount,
+            "Max slippage exceeded"
+        );
+
+        in_reserve_mapper.update(|x| *x += amount_in);
+
+        (lp_amount, lp_token)
+    }
+
     fn lp_burn(&self, amount: &BigUint) {
         self.lp_token_supply().update(|x| *x -= amount);
 

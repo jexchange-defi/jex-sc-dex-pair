@@ -103,6 +103,35 @@ pub trait JexScPairContract:
         }
     }
 
+    /// Add liquidity by providing only 1 of the 2 tokens
+    /// Provided liquidity is added to the reserves and corresponding LP tokens are sent to caller.
+    /// payment = token to deposit
+    #[payable("*")]
+    #[endpoint(addLiquiditySingle)]
+    fn add_liquidity_single(&self, min_other_token_amount: BigUint) {
+        let (token_identifier, payment_amount) = self.call_value().single_fungible_esdt();
+
+        let first_token = self.first_token().get();
+        let second_token = self.second_token().get();
+
+        let is_first_token_in = token_identifier == first_token;
+        let is_second_token_in = token_identifier == second_token;
+
+        require!(
+            is_first_token_in || is_second_token_in,
+            "Invalid payment token"
+        );
+
+        let (lp_amount, lp_token) = self.lp_add_liquidity_single_side(
+            &payment_amount,
+            &min_other_token_amount,
+            is_first_token_in,
+        );
+
+        let caller = self.blockchain().get_caller();
+        self.send().direct_esdt(&caller, &lp_token, 0, &lp_amount);
+    }
+
     #[payable("*")]
     #[endpoint(removeLiquidity)]
     fn remove_liquidity(&self, min_first_token_amount: BigUint, min_second_token_amount: BigUint) {
