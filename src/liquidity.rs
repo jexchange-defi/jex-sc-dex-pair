@@ -11,6 +11,12 @@ pub struct EstimateAddLiquidityOut<M: ManagedTypeApi> {
     eq_second_tokens: BigUint<M>,
 }
 
+#[derive(TopEncode, TopDecode, TypeAbi)]
+pub struct EstimateRemoveLiquidityOut<M: ManagedTypeApi> {
+    pub eq_first_tokens: BigUint<M>,
+    pub eq_second_tokens: BigUint<M>,
+}
+
 #[multiversx_sc::module]
 pub trait LiquidityModule {
     // functions
@@ -147,6 +153,26 @@ pub trait LiquidityModule {
             } else {
                 eq_amount_in.clone()
             },
+        };
+
+        estimation
+    }
+
+    fn lp_estimate_remove_liquidity(
+        &self,
+        lp_amount: &BigUint,
+    ) -> EstimateRemoveLiquidityOut<Self::Api> {
+        let lp_supply = self.lp_token_supply().get();
+
+        require!(lp_amount < &lp_supply, "Cannot remove that much liquidity");
+
+        let eq_first_tokens = (self.first_token_reserve().get() * lp_amount) / &lp_supply;
+
+        let eq_second_tokens = (self.second_token_reserve().get() * lp_amount) / &lp_supply;
+
+        let estimation = EstimateRemoveLiquidityOut {
+            eq_first_tokens,
+            eq_second_tokens,
         };
 
         estimation

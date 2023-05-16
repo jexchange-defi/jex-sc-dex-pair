@@ -315,6 +315,70 @@ pub trait JexScPairContract:
         estimation
     }
 
+    #[view(estimateRemoveLiquidity)]
+    fn estimate_remove_liquidity(
+        &self,
+        lp_amount: BigUint,
+    ) -> liquidity::EstimateRemoveLiquidityOut<Self::Api> {
+        let estimation = self.lp_estimate_remove_liquidity(&lp_amount);
+
+        estimation
+    }
+
+    #[view(estimateRemoveLiquiditySingle)]
+    fn estimate_remove_liquidity_single(
+        &self,
+        lp_amount: BigUint,
+        token_out: TokenIdentifier,
+    ) -> liquidity::EstimateRemoveLiquidityOut<Self::Api> {
+        require!(
+            &lp_amount * 2u32 <= self.lp_token_supply().get(),
+            "Cannot remove that much liquidity"
+        );
+
+        let est_remove_lp = self.lp_estimate_remove_liquidity(&lp_amount);
+
+        let first_token = self.first_token().get();
+        let second_token = self.second_token().get();
+
+        let is_first_token_out = token_out == first_token;
+        let is_second_token_out = token_out == second_token;
+
+        require!(
+            is_first_token_out || is_second_token_out,
+            "Invalid out token"
+        );
+
+        if is_first_token_out {
+            self.first_token_reserve()
+                .update(|x| *x -= &est_remove_lp.eq_first_tokens);
+        } else {
+            self.second_token_reserve()
+                .update(|x| *x -= &est_remove_lp.eq_second_tokens);
+        }
+
+        let half_swap_estimate = if is_first_token_out {
+            self.estimate_amount_out_inner(&est_remove_lp.eq_second_tokens, false)
+        } else {
+            self.estimate_amount_out_inner(&est_remove_lp.eq_first_tokens, true)
+        };
+
+        let estimation = liquidity::EstimateRemoveLiquidityOut {
+            eq_first_tokens: if is_first_token_out {
+                &est_remove_lp.eq_first_tokens + &half_swap_estimate.net_amount_out
+            } else {
+                BigUint::zero()
+            },
+            eq_second_tokens: if is_second_token_out {
+                &est_remove_lp.eq_second_tokens + &half_swap_estimate.net_amount_out
+            } else {
+                BigUint::zero()
+            },
+        };
+
+        estimation
+    }
+
     #[view(getFirstToken)]
     #[storage_mapper("first_token")]
     fn first_token(&self) -> SingleValueMapper<TokenIdentifier>;

@@ -1,0 +1,36 @@
+{
+  "steps": [
+    {
+      "step": "externalSteps",
+      "path": "add_liquidity_exact.scen.json"
+    },
+    {
+      "step": "scQuery",
+      "tx": {
+        "to": "sc:pair",
+        "function": "estimateRemoveLiquiditySingle",
+        "arguments": ["1,500000000000000001", "str:WEGLD:000000"]
+      },
+      "expect": {
+        "status": "4",
+        "message": "str:Cannot remove that much liquidity"
+      }
+    },
+    {
+      "step": "scQuery",
+      "tx": {
+        "to": "sc:pair",
+        "function": "estimateRemoveLiquiditySingle",
+        "arguments": ["1,000000000000000000", "str:WEGLD-000000"]
+      },
+      "expect": {
+        "out": [
+          {
+            "1-eq_first_tokens": "biguint:0",
+            "2-eq_second_tokens": "biguint:1,500000000000000000"
+          }
+        ]
+      }
+    }
+  ]
+}

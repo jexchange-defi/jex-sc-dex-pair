@@ -8,7 +8,7 @@ pub struct EstimateAmountIn<M: ManagedTypeApi> {
 
 #[derive(TopEncode, TopDecode, TypeAbi)]
 pub struct EstimateAmountOut<M: ManagedTypeApi> {
-    net_amount_out: BigUint<M>,
+    pub net_amount_out: BigUint<M>,
     amount_out: BigUint<M>,
     liq_providers_fee: BigUint<M>,
     platform_fee: BigUint<M>,
