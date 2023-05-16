@@ -202,7 +202,6 @@ pub trait JexScPairContract:
         require!(exact_amount_in <= amount_in, "Max slippage exceeded");
 
         let caller = self.blockchain().get_caller();
-        sc_print!("exact_amount_out: {}", exact_amount_out);
         self.send()
             .direct_esdt(&caller, &token_out, 0, &exact_amount_out);
 
