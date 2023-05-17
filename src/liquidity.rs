@@ -46,6 +46,11 @@ pub trait LiquidityModule {
         min_second_token_amount: &BigUint,
         max_second_token_amount: &BigUint,
     ) -> (BigUint, TokenIdentifier, BigUint) {
+        require!(
+            !self.lp_token_supply().is_empty(),
+            "Initial liquidity is not set"
+        );
+
         let first_token_reserve = self.first_token_reserve().get();
 
         let exact_second_token_amount =
@@ -82,6 +87,11 @@ pub trait LiquidityModule {
         min_second_token_amount: &BigUint,
         is_first_token_in: bool,
     ) -> (BigUint, TokenIdentifier) {
+        require!(
+            !self.lp_token_supply().is_empty(),
+            "Initial liquidity is not set"
+        );
+
         let estimation = self.lp_estimate_add_liquidity_single(amount_in, is_first_token_in);
 
         require!(
