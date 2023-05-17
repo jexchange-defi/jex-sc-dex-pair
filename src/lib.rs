@@ -58,6 +58,8 @@ pub trait JexScPairContract:
     #[payable("*")]
     #[endpoint(addInitialLiquidity)]
     fn add_initial_liquidity(&self) {
+        require!(!self.lp_token().is_empty(), "LP token not issued");
+
         let [first_payment, second_payment] = self.call_value().multi_esdt();
 
         require!(
