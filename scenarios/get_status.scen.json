@@ -1,0 +1,29 @@
+{
+  "steps": [
+    {
+      "step": "externalSteps",
+      "path": "add_liquidity_exact.scen.json"
+    },
+    {
+      "step": "scQuery",
+      "tx": {
+        "to": "sc:pair",
+        "function": "getStatus",
+        "arguments": []
+      },
+      "expect": {
+        "out": [
+          {
+            "1-first_token": "nested:str:JEX-000000",
+            "2-first_token_reserve": "biguint:30000,000000000000000000",
+            "3-second_token": "nested:str:WEGLD-000000",
+            "4-second_token_reserve": "biguint:3,000000000000000000",
+            "5-lp_token": "nested:str:LPJEXWEGLD-000000",
+            "6-lp_token_supply": "biguint:3,000000000000000000",
+            "7-owner": "address:owner"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -3,11 +3,23 @@
 use core::ops::Deref;
 
 multiversx_sc::imports!();
+multiversx_sc::derive_imports!();
 
 mod fees;
 mod liquidity;
 mod swap;
 mod wrap_sc_proxy;
+
+#[derive(TopEncode, TopDecode, TypeAbi)]
+pub struct PairStatus<M: ManagedTypeApi> {
+    first_token_identifier: TokenIdentifier<M>,
+    first_token_reserve: BigUint<M>,
+    second_token_identifier: TokenIdentifier<M>,
+    second_token_reserve: BigUint<M>,
+    lp_token_identifier: TokenIdentifier<M>,
+    lp_token_supply: BigUint<M>,
+    owner: ManagedAddress<M>,
+}
 
 #[multiversx_sc::contract]
 pub trait JexScPairContract:
@@ -463,6 +475,21 @@ pub trait JexScPairContract:
     #[view(getSecondToken)]
     #[storage_mapper("second_token")]
     fn second_token(&self) -> SingleValueMapper<TokenIdentifier>;
+
+    #[view(getStatus)]
+    fn get_status(&self) -> PairStatus<Self::Api> {
+        let status = PairStatus {
+            first_token_identifier: self.first_token().get(),
+            first_token_reserve: self.first_token_reserve().get(),
+            second_token_identifier: self.second_token().get(),
+            second_token_reserve: self.second_token_reserve().get(),
+            lp_token_identifier: self.lp_token().get(),
+            lp_token_supply: self.lp_token_supply().get(),
+            owner: self.blockchain().get_owner_address(),
+        };
+
+        status
+    }
 
     #[view(getWrapScAddress)]
     #[storage_mapper("wrap_sc_address")]
