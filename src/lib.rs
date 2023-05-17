@@ -140,10 +140,10 @@ pub trait JexScPairContract:
     #[payable("*")]
     #[endpoint(removeLiquidity)]
     fn remove_liquidity(&self, min_first_token_amount: BigUint, min_second_token_amount: BigUint) {
-        let (lp_token_identifier, lp_amount) = self.call_value().single_fungible_esdt();
+        let (lp_token, lp_amount) = self.call_value().single_fungible_esdt();
 
         let (exact_first_token_amount, exact_second_token_amount) =
-            self.lp_remove_liquidity(lp_token_identifier, lp_amount);
+            self.lp_remove_liquidity(lp_token, lp_amount);
 
         require!(
             exact_first_token_amount >= min_first_token_amount,
@@ -167,6 +167,53 @@ pub trait JexScPairContract:
             0,
             &exact_second_token_amount,
         );
+    }
+
+    /// Remove liquidity and swap one half to desired token in 1 transaction
+    #[payable("*")]
+    #[endpoint(removeLiquiditySingle)]
+    fn remove_liquidity_single(
+        &self,
+        token_out: TokenIdentifier,
+        min_first_token_amount: BigUint,
+        min_second_token_amount: BigUint,
+    ) {
+        let (lp_token, lp_amount) = self.call_value().single_fungible_esdt();
+
+        let (first_tokens_removed, second_tokens_removed) =
+            self.lp_remove_liquidity(lp_token, lp_amount);
+
+        let is_first_token_out = &token_out == &self.first_token().get();
+        let is_first_token_in = !is_first_token_out;
+
+        let swap_amount_in = if is_first_token_in {
+            &first_tokens_removed
+        } else {
+            &second_tokens_removed
+        };
+
+        let swap_payment =
+            self.swap_tokens_fixed_input_inner(swap_amount_in, &token_out, is_first_token_in);
+
+        let caller = self.blockchain().get_caller();
+        if is_first_token_out {
+            let amount_out = &first_tokens_removed + &swap_payment.amount;
+            require!(
+                amount_out >= min_first_token_amount,
+                "Max slippage exceeded for first token"
+            );
+
+            self.send()
+                .direct_esdt(&caller, &self.first_token().get(), 0, &amount_out);
+        } else {
+            let amount_out = &second_tokens_removed + &swap_payment.amount;
+            require!(
+                amount_out >= min_second_token_amount,
+                "Max slippage exceeded for second token"
+            );
+            self.send()
+                .direct_esdt(&caller, &self.second_token().get(), 0, &amount_out);
+        }
     }
 
     #[payable("*")]
@@ -325,6 +372,8 @@ pub trait JexScPairContract:
         estimation
     }
 
+    /// Estimate liquidity removal to one token
+    /// (liquidity removal + swap of one half to desired token)
     #[view(estimateRemoveLiquiditySingle)]
     fn estimate_remove_liquidity_single(
         &self,
@@ -349,13 +398,10 @@ pub trait JexScPairContract:
             "Invalid out token"
         );
 
-        if is_first_token_out {
-            self.first_token_reserve()
-                .update(|x| *x -= &est_remove_lp.eq_first_tokens);
-        } else {
-            self.second_token_reserve()
-                .update(|x| *x -= &est_remove_lp.eq_second_tokens);
-        }
+        self.first_token_reserve()
+            .update(|x| *x -= &est_remove_lp.eq_first_tokens);
+        self.second_token_reserve()
+            .update(|x| *x -= &est_remove_lp.eq_second_tokens);
 
         let half_swap_estimate = if is_first_token_out {
             self.estimate_amount_out_inner(&est_remove_lp.eq_second_tokens, false)

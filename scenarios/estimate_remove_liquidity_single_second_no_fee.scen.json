@@ -27,7 +27,7 @@
         "out": [
           {
             "1-eq_first_tokens": "biguint:0",
-            "2-eq_second_tokens": "biguint:1,500000000000000000"
+            "2-eq_second_tokens": "biguint:1,666666666666666666"
           }
         ]
       }
