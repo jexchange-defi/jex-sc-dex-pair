@@ -26,7 +26,11 @@
       "accounts": {
         "sc:pair": {
           "code": "*",
-          "esdt": {},
+          "esdt": {
+            "str:LPJEXWEGLD-000000": {
+              "roles": ["ESDTRoleLocalBurn", "ESDTRoleLocalMint"]
+            }
+          },
           "storage": {
             "str:platform_fees": "2",
             "str:platform_fees_receiver": "address:platform",

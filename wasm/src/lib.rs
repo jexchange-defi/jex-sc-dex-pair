@@ -5,9 +5,9 @@
 ////////////////////////////////////////////////////
 
 // Init:                                 1
-// Endpoints:                           24
-// Async Callback (empty):               1
-// Total number of exported functions:  26
+// Endpoints:                           25
+// Async Callback:                       1
+// Total number of exported functions:  27
 
 #![no_std]
 #![feature(lang_items)]
@@ -18,6 +18,7 @@ multiversx_sc_wasm_adapter::panic_handler!();
 multiversx_sc_wasm_adapter::endpoints! {
     jex_sc_pair
     (
+        issueLpToken
         addInitialLiquidity
         configureLiqProvidersFees
         configurePlatformFees
@@ -42,7 +43,6 @@ multiversx_sc_wasm_adapter::endpoints! {
         getSecondTokenReserve
         getLpToken
         getLpTokenSupply
+        callBack
     )
 }
-
-multiversx_sc_wasm_adapter::empty_callback! {}

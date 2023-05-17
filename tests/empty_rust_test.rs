@@ -32,14 +32,12 @@ where
 
     let jex_id: &[u8] = b"JEX-000000";
     let wegld_id: &[u8] = b"WEGLD-000000";
-    let lp_id: &[u8] = b"JEXWEGLD-000000";
 
     blockchain_wrapper
         .execute_tx(&owner_address, &cf_wrapper, &rust_zero, |sc| {
             sc.init(
                 TokenIdentifier::from_esdt_bytes(jex_id),
                 TokenIdentifier::from_esdt_bytes(wegld_id),
-                TokenIdentifier::from_esdt_bytes(lp_id),
             );
         })
         .assert_ok();
@@ -59,7 +57,6 @@ fn deploy_test() {
 
     let jex_id: &[u8] = b"JEX-000000";
     let wegld_id: &[u8] = b"WEGLD-000000";
-    let lp_id: &[u8] = b"JEXWEGLD-000000";
 
     // simulate deploy
     setup
@@ -72,7 +69,6 @@ fn deploy_test() {
                 sc.init(
                     TokenIdentifier::from_esdt_bytes(jex_id),
                     TokenIdentifier::from_esdt_bytes(wegld_id),
-                    TokenIdentifier::from_esdt_bytes(lp_id),
                 );
             },
         )

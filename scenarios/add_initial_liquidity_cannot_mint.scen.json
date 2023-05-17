@@ -1,10 +1,6 @@
 {
   "steps": [
     {
-      "step": "externalSteps",
-      "path": "init.scen.json"
-    },
-    {
       "step": "setState",
       "accounts": {
         "address:owner": {
@@ -13,6 +9,20 @@
           "esdt": {
             "str:JEX-000000": "1000,000000000000000000",
             "str:WEGLD-000000": "1,000000000000000000"
+          }
+        },
+        "sc:pair": {
+          "code": "file:../output/jex-sc-pair.wasm",
+          "esdt": {
+            "str:LPJEXWEGLD-000000": {
+              "roles": []
+            }
+          },
+          "owner": "address:owner",
+          "storage": {
+            "str:first_token": "str:JEX-000000",
+            "str:second_token": "str:WEGLD-000000",
+            "str:lp_token": "str:LPJEXWEGLD-000000"
           }
         }
       }

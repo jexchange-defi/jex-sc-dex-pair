@@ -1,5 +1,7 @@
 #![no_std]
 
+use core::ops::Deref;
+
 multiversx_sc::imports!();
 
 mod fees;
@@ -12,18 +14,45 @@ pub trait JexScPairContract:
     fees::FeesModule + liquidity::LiquidityModule + swap::SwapModule
 {
     #[init]
-    fn init(
-        &self,
-        first_token: TokenIdentifier,
-        second_token: TokenIdentifier,
-        lp_token: TokenIdentifier,
-    ) {
+    fn init(&self, first_token: TokenIdentifier, second_token: TokenIdentifier) {
         self.first_token().set_if_empty(&first_token);
         self.second_token().set_if_empty(&second_token);
-        self.lp_token().set_if_empty(&lp_token);
     }
 
     // owner endpoints
+
+    #[only_owner]
+    #[payable("EGLD")]
+    #[endpoint(issueLpToken)]
+    fn issue_lp_token(&self, lp_token_display_name: ManagedBuffer, lp_token_ticker: ManagedBuffer) {
+        require!(self.lp_token().is_empty(), "LP token already issued");
+
+        let egld_value = self.call_value().egld_value().deref().clone();
+        let caller = self.blockchain().get_caller();
+
+        self.send()
+            .esdt_system_sc_proxy()
+            .issue_fungible(
+                egld_value,
+                &lp_token_display_name,
+                &lp_token_ticker,
+                &BigUint::from(1_000u32),
+                FungibleTokenProperties {
+                    num_decimals: 18,
+                    can_freeze: true,
+                    can_wipe: true,
+                    can_pause: true,
+                    can_mint: true,
+                    can_burn: true,
+                    can_change_owner: true,
+                    can_upgrade: true,
+                    can_add_special_roles: true,
+                },
+            )
+            .async_call()
+            .with_callback(self.callbacks().lp_token_issue_callback(&caller))
+            .call_and_exit();
+    }
 
     #[only_owner]
     #[payable("*")]
@@ -436,6 +465,27 @@ pub trait JexScPairContract:
     #[view(getWrapScAddress)]
     #[storage_mapper("wrap_sc_address")]
     fn wrap_sc_address(&self) -> SingleValueMapper<ManagedAddress>;
+
+    // callbacks
+
+    #[callback]
+    fn lp_token_issue_callback(
+        &self,
+        caller: &ManagedAddress,
+        #[call_result] result: ManagedAsyncCallResult<()>,
+    ) {
+        let (token_id, returned_tokens) = self.call_value().egld_or_single_fungible_esdt();
+        match result {
+            ManagedAsyncCallResult::Ok(()) => {
+                self.lp_token().set(token_id.unwrap_esdt());
+            }
+            ManagedAsyncCallResult::Err(_) => {
+                if token_id.is_egld() && returned_tokens > 0u64 {
+                    self.send().direct_egld(caller, &returned_tokens);
+                }
+            }
+        }
+    }
 
     // proxies
 

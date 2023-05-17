@@ -26,7 +26,11 @@
       "accounts": {
         "sc:pair": {
           "code": "*",
-          "esdt": {},
+          "esdt": {
+            "str:LPJEXWEGLD-000000": {
+              "roles": ["ESDTRoleLocalBurn", "ESDTRoleLocalMint"]
+            }
+          },
           "storage": {
             "str:liq_providers_fees": "5",
             "+": ""
