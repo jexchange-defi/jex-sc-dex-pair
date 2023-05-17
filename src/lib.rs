@@ -67,6 +67,23 @@ pub trait JexScPairContract:
     }
 
     #[only_owner]
+    #[endpoint(enableMintBurn)]
+    fn enable_mint_burn(&self) {
+        let lp_token = self.lp_token().get();
+        require!(lp_token.is_valid_esdt_identifier(), "LP token not issued");
+
+        let roles = [EsdtLocalRole::Mint, EsdtLocalRole::Burn];
+
+        let sc_address = self.blockchain().get_sc_address();
+
+        self.send()
+            .esdt_system_sc_proxy()
+            .set_special_roles(&sc_address, &lp_token, roles.iter().cloned())
+            .async_call()
+            .call_and_exit();
+    }
+
+    #[only_owner]
     #[payable("*")]
     #[endpoint(addInitialLiquidity)]
     fn add_initial_liquidity(&self) {
@@ -506,7 +523,9 @@ pub trait JexScPairContract:
         let (token_id, returned_tokens) = self.call_value().egld_or_single_fungible_esdt();
         match result {
             ManagedAsyncCallResult::Ok(()) => {
-                self.lp_token().set(token_id.unwrap_esdt());
+                let esdt = token_id.unwrap_esdt();
+                self.lp_token().set(&esdt);
+                self.send().direct_esdt(caller, &esdt, 0, &returned_tokens);
             }
             ManagedAsyncCallResult::Err(_) => {
                 if token_id.is_egld() && returned_tokens > 0u64 {

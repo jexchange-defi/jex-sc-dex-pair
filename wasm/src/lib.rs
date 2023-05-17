@@ -5,9 +5,9 @@
 ////////////////////////////////////////////////////
 
 // Init:                                 1
-// Endpoints:                           25
+// Endpoints:                           27
 // Async Callback:                       1
-// Total number of exported functions:  27
+// Total number of exported functions:  29
 
 #![no_std]
 #![feature(lang_items)]
@@ -19,6 +19,7 @@ multiversx_sc_wasm_adapter::endpoints! {
     jex_sc_pair
     (
         issueLpToken
+        enableMintBurn
         addInitialLiquidity
         configureLiqProvidersFees
         configurePlatformFees
@@ -35,6 +36,7 @@ multiversx_sc_wasm_adapter::endpoints! {
         estimateRemoveLiquiditySingle
         getFirstToken
         getSecondToken
+        getStatus
         getWrapScAddress
         getLiqProvidersFees
         getPlatformFees
