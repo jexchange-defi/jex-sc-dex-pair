@@ -15,16 +15,23 @@ pub struct EstimateAmountOut<M: ManagedTypeApi> {
 }
 
 #[multiversx_sc::module]
-pub trait SwapModule: crate::fees::FeesModule + crate::liquidity::LiquidityModule {
+pub trait SwapModule:
+    crate::analytics::AnalyticsModule + crate::fees::FeesModule + crate::liquidity::LiquidityModule
+{
     // functions
 
     fn swap_tokens_fixed_input_inner(
         &self,
+        token_in: &TokenIdentifier,
         amount_in: &BigUint,
         token_out: &TokenIdentifier,
         is_first_token_in: bool,
     ) -> EsdtTokenPayment {
         let estimation = self.estimate_amount_out_inner(amount_in, is_first_token_in);
+
+        self.analytics_add_volume(token_in, amount_in);
+        self.analytics_add_volume(token_out, &estimation.amount_out);
+        self.analytics_add_lp_fees(token_out, &estimation.liq_providers_fee);
 
         let diff_out_reserve = estimation.amount_out - estimation.liq_providers_fee;
 
@@ -37,14 +44,20 @@ pub trait SwapModule: crate::fees::FeesModule + crate::liquidity::LiquidityModul
 
     fn swap_tokens_fixed_output_inner(
         &self,
-        exact_amount_out: &BigUint,
+        token_in: &TokenIdentifier,
         token_out: &TokenIdentifier,
+        exact_amount_out: &BigUint,
         is_first_token_in: bool,
     ) -> BigUint {
         let estimation = self.estimate_amount_in_inner(exact_amount_out, is_first_token_in);
 
         let exact_amount_in = estimation.amount_in;
-        self.swap_tokens_fixed_input_inner(&exact_amount_in, token_out, is_first_token_in);
+        self.swap_tokens_fixed_input_inner(
+            token_in,
+            &exact_amount_in,
+            token_out,
+            is_first_token_in,
+        );
 
         exact_amount_in
     }

@@ -22,6 +22,9 @@
             "str:lp_token": "str:LPJEXWEGLD-000000"
           }
         }
+      },
+      "currentBlockInfo": {
+        "blockEpoch": "333"
       }
     }
   ]

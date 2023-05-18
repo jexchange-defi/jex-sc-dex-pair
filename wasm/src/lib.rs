@@ -5,9 +5,9 @@
 ////////////////////////////////////////////////////
 
 // Init:                                 1
-// Endpoints:                           30
+// Endpoints:                           32
 // Async Callback:                       1
-// Total number of exported functions:  32
+// Total number of exported functions:  34
 
 #![no_std]
 #![feature(lang_items)]
@@ -40,6 +40,8 @@ multiversx_sc_wasm_adapter::endpoints! {
         getSecondToken
         getStatus
         getWrapScAddress
+        getLpFees
+        getTradingVolume
         getLiqProvidersFees
         getPlatformFees
         getPlatformFeesReceiver

@@ -112,6 +112,10 @@
             }
           },
           "storage": {
+            "str:an_lp_fees|u64:333|nested:str:JEX-000000": "",
+            "str:an_lp_fees|u64:333|nested:str:WEGLD-000000": "0,005000000000000000",
+            "str:an_t_vol|u64:333|nested:str:JEX-000000": "15000,000000000000000000",
+            "str:an_t_vol|u64:333|nested:str:WEGLD-000000": "1,000000000000000000",
             "str:first_token_reserve": "45000,000000000000000000",
             "str:second_token_reserve": "2,005000000000000000",
             "str:lp_token_supply": "3,000000000000000000",

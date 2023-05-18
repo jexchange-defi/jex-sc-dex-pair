@@ -5,6 +5,7 @@ use core::ops::Deref;
 multiversx_sc::imports!();
 multiversx_sc::derive_imports!();
 
+mod analytics;
 mod fees;
 mod liquidity;
 mod pausable;
@@ -25,7 +26,11 @@ pub struct PairStatus<M: ManagedTypeApi> {
 
 #[multiversx_sc::contract]
 pub trait JexScPairContract:
-    fees::FeesModule + liquidity::LiquidityModule + pausable::PausableModule + swap::SwapModule
+    analytics::AnalyticsModule
+    + fees::FeesModule
+    + liquidity::LiquidityModule
+    + pausable::PausableModule
+    + swap::SwapModule
 {
     #[init]
     fn init(&self, first_token: TokenIdentifier, second_token: TokenIdentifier) {
@@ -272,14 +277,18 @@ pub trait JexScPairContract:
         let is_first_token_out = &token_out == &self.first_token().get();
         let is_first_token_in = !is_first_token_out;
 
-        let swap_amount_in = if is_first_token_in {
-            &first_tokens_removed
+        let (token_in, swap_amount_in) = if is_first_token_in {
+            (self.first_token().get(), &first_tokens_removed)
         } else {
-            &second_tokens_removed
+            (self.second_token().get(), &second_tokens_removed)
         };
 
-        let swap_payment =
-            self.swap_tokens_fixed_input_inner(swap_amount_in, &token_out, is_first_token_in);
+        let swap_payment = self.swap_tokens_fixed_input_inner(
+            &token_in,
+            swap_amount_in,
+            &token_out,
+            is_first_token_in,
+        );
 
         let caller = self.blockchain().get_caller();
         if is_first_token_out {
@@ -326,8 +335,12 @@ pub trait JexScPairContract:
             first_token
         };
 
-        let payment_out =
-            self.swap_tokens_fixed_input_inner(&amount_in, &token_out, is_first_token_in);
+        let payment_out = self.swap_tokens_fixed_input_inner(
+            &token_in,
+            &amount_in,
+            &token_out,
+            is_first_token_in,
+        );
 
         require!(
             payment_out.amount >= min_amount_out,
@@ -367,8 +380,12 @@ pub trait JexScPairContract:
             first_token
         };
 
-        let exact_amount_in =
-            self.swap_tokens_fixed_output_inner(&exact_amount_out, &token_out, is_first_token_in);
+        let exact_amount_in = self.swap_tokens_fixed_output_inner(
+            &token_in,
+            &token_out,
+            &exact_amount_out,
+            is_first_token_in,
+        );
 
         require!(exact_amount_in <= amount_in, "Max slippage exceeded");
 
