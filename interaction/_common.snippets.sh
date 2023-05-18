@@ -41,6 +41,18 @@ issueLpToken() {
         --proxy=${PROXY} --chain=${CHAIN} --send || return
 }
 
+pause() {
+    mxpy contract call ${SC_ADDRESS} --recall-nonce --pem=${1} --gas-limit=75000000 \
+        --function="pause" \
+        --proxy=${PROXY} --chain=${CHAIN} --send || return
+}
+
+unpause() {
+    mxpy contract call ${SC_ADDRESS} --recall-nonce --pem=${1} --gas-limit=75000000 \
+        --function="unpause" \
+        --proxy=${PROXY} --chain=${CHAIN} --send || return
+}
+
 
 ##
 # Public endpoints
