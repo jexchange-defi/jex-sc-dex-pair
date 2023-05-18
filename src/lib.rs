@@ -7,11 +7,13 @@ multiversx_sc::derive_imports!();
 
 mod fees;
 mod liquidity;
+mod pausable;
 mod swap;
 mod wrap_sc_proxy;
 
 #[derive(TopEncode, TopDecode, TypeAbi)]
 pub struct PairStatus<M: ManagedTypeApi> {
+    paused: bool,
     first_token_identifier: TokenIdentifier<M>,
     first_token_reserve: BigUint<M>,
     second_token_identifier: TokenIdentifier<M>,
@@ -23,12 +25,14 @@ pub struct PairStatus<M: ManagedTypeApi> {
 
 #[multiversx_sc::contract]
 pub trait JexScPairContract:
-    fees::FeesModule + liquidity::LiquidityModule + swap::SwapModule
+    fees::FeesModule + liquidity::LiquidityModule + pausable::PausableModule + swap::SwapModule
 {
     #[init]
     fn init(&self, first_token: TokenIdentifier, second_token: TokenIdentifier) {
         self.first_token().set_if_empty(&first_token);
         self.second_token().set_if_empty(&second_token);
+
+        self.do_pause();
     }
 
     // owner endpoints
@@ -126,8 +130,22 @@ pub trait JexScPairContract:
         self.platform_fees_receiver().set(&receiver);
     }
 
+    #[only_owner]
+    #[endpoint]
+    fn pause(&self) {
+        self.do_pause();
+    }
+
+    #[only_owner]
+    #[endpoint]
+    fn unpause(&self) {
+        self.do_unpause();
+    }
+
     // public endpoints
 
+    /// Add liquidity is both tokens
+    /// Note: liquidity can be added if SC is paused
     #[payable("*")]
     #[endpoint(addLiquidity)]
     fn add_liquidity(&self, min_second_token_amount: BigUint) {
@@ -166,6 +184,7 @@ pub trait JexScPairContract:
     /// Add liquidity by providing only 1 of the 2 tokens
     /// Provided liquidity is added to the reserves and corresponding LP tokens are sent to caller.
     /// payment = token to deposit
+    /// Note: unlike classic liquidity addition, SC must not be paused
     #[payable("*")]
     #[endpoint(addLiquiditySingle)]
     fn add_liquidity_single(
@@ -173,6 +192,8 @@ pub trait JexScPairContract:
         min_first_token_amount: BigUint,
         min_second_token_amount: BigUint,
     ) {
+        self.require_not_paused();
+
         let (token_identifier, payment_amount) = self.call_value().single_fungible_esdt();
 
         let first_token = self.first_token().get();
@@ -197,6 +218,8 @@ pub trait JexScPairContract:
         self.send().direct_esdt(&caller, &lp_token, 0, &lp_amount);
     }
 
+    /// Remove liquidity in both tokens
+    /// Note: liquidity can be removed if SC is paused
     #[payable("*")]
     #[endpoint(removeLiquidity)]
     fn remove_liquidity(&self, min_first_token_amount: BigUint, min_second_token_amount: BigUint) {
@@ -230,6 +253,7 @@ pub trait JexScPairContract:
     }
 
     /// Remove liquidity and swap one half to desired token in 1 transaction
+    /// Note: unlike classic liquidity removal, SC must not be paused
     #[payable("*")]
     #[endpoint(removeLiquiditySingle)]
     fn remove_liquidity_single(
@@ -238,6 +262,8 @@ pub trait JexScPairContract:
         min_first_token_amount: BigUint,
         min_second_token_amount: BigUint,
     ) {
+        self.require_not_paused();
+
         let (lp_token, lp_amount) = self.call_value().single_fungible_esdt();
 
         let (first_tokens_removed, second_tokens_removed) =
@@ -279,6 +305,8 @@ pub trait JexScPairContract:
     #[payable("*")]
     #[endpoint(swapTokensFixedInput)]
     fn swap_tokens_fixed_input(&self, min_amount_out: BigUint) {
+        self.require_not_paused();
+
         let (token_in, amount_in) = self.call_value().single_fungible_esdt();
 
         let first_token = self.first_token().get();
@@ -318,6 +346,8 @@ pub trait JexScPairContract:
     #[payable("*")]
     #[endpoint(swapTokensFixedOutput)]
     fn swap_tokens_fixed_output(&self, exact_amount_out: BigUint) {
+        self.require_not_paused();
+
         let (token_in, amount_in) = self.call_value().single_fungible_esdt();
 
         let first_token = self.first_token().get();
@@ -496,6 +526,7 @@ pub trait JexScPairContract:
     #[view(getStatus)]
     fn get_status(&self) -> PairStatus<Self::Api> {
         let status = PairStatus {
+            paused: self.is_paused().get(),
             first_token_identifier: self.first_token().get(),
             first_token_reserve: self.first_token_reserve().get(),
             second_token_identifier: self.second_token().get(),

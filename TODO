@@ -1,1 +1,6 @@
 pausable
+
+analytics
+  * volume per epoch
+  * lp fees per epoch
+    * compute APR

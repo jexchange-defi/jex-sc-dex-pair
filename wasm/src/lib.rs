@@ -5,9 +5,9 @@
 ////////////////////////////////////////////////////
 
 // Init:                                 1
-// Endpoints:                           27
+// Endpoints:                           30
 // Async Callback:                       1
-// Total number of exported functions:  29
+// Total number of exported functions:  32
 
 #![no_std]
 #![feature(lang_items)]
@@ -23,6 +23,8 @@ multiversx_sc_wasm_adapter::endpoints! {
         addInitialLiquidity
         configureLiqProvidersFees
         configurePlatformFees
+        pause
+        unpause
         addLiquidity
         addLiquiditySingle
         removeLiquidity
@@ -45,6 +47,7 @@ multiversx_sc_wasm_adapter::endpoints! {
         getSecondTokenReserve
         getLpToken
         getLpTokenSupply
+        isPaused
         callBack
     )
 }
