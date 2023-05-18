@@ -22,6 +22,8 @@ pub struct PairStatus<M: ManagedTypeApi> {
     lp_token_identifier: TokenIdentifier<M>,
     lp_token_supply: BigUint<M>,
     owner: ManagedAddress<M>,
+    volume_prev_epoch: [BigUint<M>; 2],
+    fees_prev_epoch: [BigUint<M>; 2],
 }
 
 #[multiversx_sc::contract]
@@ -542,15 +544,28 @@ pub trait JexScPairContract:
 
     #[view(getStatus)]
     fn get_status(&self) -> PairStatus<Self::Api> {
+        let epoch = self.blockchain().get_block_epoch() - 1u64;
+
+        let first_token = self.first_token().get();
+        let second_token = self.second_token().get();
+
         let status = PairStatus {
             paused: self.is_paused().get(),
-            first_token_identifier: self.first_token().get(),
+            first_token_identifier: first_token.clone(),
             first_token_reserve: self.first_token_reserve().get(),
-            second_token_identifier: self.second_token().get(),
+            second_token_identifier: second_token.clone(),
             second_token_reserve: self.second_token_reserve().get(),
             lp_token_identifier: self.lp_token().get(),
             lp_token_supply: self.lp_token_supply().get(),
             owner: self.blockchain().get_owner_address(),
+            volume_prev_epoch: [
+                self.trading_volume(epoch, &first_token).get(),
+                self.trading_volume(epoch, &second_token).get(),
+            ],
+            fees_prev_epoch: [
+                self.lp_fees(epoch, &first_token).get(),
+                self.lp_fees(epoch, &second_token).get(),
+            ],
         };
 
         status

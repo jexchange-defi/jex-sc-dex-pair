@@ -2,7 +2,36 @@
   "steps": [
     {
       "step": "externalSteps",
-      "path": "add_liquidity_exact.scen.json"
+      "path": "swap_fi_first_to_second.scen.json"
+    },
+    {
+      "step": "setState",
+      "accounts": {
+        "address:owner": {
+          "nonce": "1",
+          "balance": "0"
+        },
+        "sc:pair": {
+          "code": "file:../output/jex-sc-pair.wasm",
+          "owner": "address:owner",
+          "storage": {
+            "str:an_lp_fees|u64:333|nested:str:JEX-000000": "50,000000000000000000",
+            "str:an_lp_fees|u64:333|nested:str:WEGLD-000000": "0,500000000000000000",
+            "str:an_t_vol|u64:333|nested:str:JEX-000000": "10000,000000000000000000",
+            "str:an_t_vol|u64:333|nested:str:WEGLD-000000": "1,500000000000000000",
+            "str:first_token": "str:JEX-000000",
+            "str:first_token_reserve": "30000,000000000000000000",
+            "str:paused": "false",
+            "str:second_token": "str:WEGLD-000000",
+            "str:second_token_reserve": "3,000000000000000000",
+            "str:lp_token": "str:LPJEXWEGLD-000000",
+            "str:lp_token_supply": "3,000000000000000000"
+          }
+        }
+      },
+      "currentBlockInfo": {
+        "blockEpoch": "334"
+      }
     },
     {
       "step": "scQuery",
@@ -14,14 +43,16 @@
       "expect": {
         "out": [
           {
-            "1-paused": "u8:0",
-            "2-first_token": "nested:str:JEX-000000",
-            "3-first_token_reserve": "biguint:30000,000000000000000000",
-            "4-second_token": "nested:str:WEGLD-000000",
-            "5-second_token_reserve": "biguint:3,000000000000000000",
-            "6-lp_token": "nested:str:LPJEXWEGLD-000000",
-            "7-lp_token_supply": "biguint:3,000000000000000000",
-            "8-owner": "address:owner"
+            "01-paused": "u8:0",
+            "02-first_token": "nested:str:JEX-000000",
+            "03-first_token_reserve": "biguint:30000,000000000000000000",
+            "04-second_token": "nested:str:WEGLD-000000",
+            "05-second_token_reserve": "biguint:3,000000000000000000",
+            "06-lp_token": "nested:str:LPJEXWEGLD-000000",
+            "07-lp_token_supply": "biguint:3,000000000000000000",
+            "08-owner": "address:owner",
+            "09-volume": "biguint:10000,000000000000000000|biguint:1,500000000000000000",
+            "10-fees": "biguint:50,000000000000000000|biguint:0,500000000000000000"
           }
         ]
       }
