@@ -24,6 +24,25 @@ addInitialLiquidity() {
         --proxy=${PROXY} --chain=${CHAIN} --send || return
 }
 
+configureLiqProvidersFees() {
+    read -p "LP fees (100=1%): " LP_FEES
+
+    mxpy contract call ${SC_ADDRESS} --recall-nonce --pem=${1} --gas-limit=10000000 \
+        --function="configureLiqProvidersFees" \
+        --arguments "${LP_FEES}" \
+        --proxy=${PROXY} --chain=${CHAIN} --send || return
+}
+
+configurePlatformFees() {
+    read -p "Platform fees (100=1%): " PLATFORM_FEES
+    read -p "Receiver: " FEES_RECEIVER
+
+    mxpy contract call ${SC_ADDRESS} --recall-nonce --pem=${1} --gas-limit=10000000 \
+        --function="configurePlatformFees" \
+        --arguments "${PLATFORM_FEES}" "${FEES_RECEIVER}" \
+        --proxy=${PROXY} --chain=${CHAIN} --send || return
+}
+
 enableMintBurn() {
     mxpy contract call ${SC_ADDRESS} --recall-nonce --pem=${1} --gas-limit=75000000 \
         --function="enableMintBurn" \
