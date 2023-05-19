@@ -25,7 +25,10 @@
             "str:second_token": "str:WEGLD-000000",
             "str:second_token_reserve": "3,000000000000000000",
             "str:lp_token": "str:LPJEXWEGLD-000000",
-            "str:lp_token_supply": "3,000000000000000000"
+            "str:lp_token_supply": "3,000000000000000000",
+            "str:liq_providers_fees": "20",
+            "str:platform_fees": "10",
+            "str:platform_fees_receiver": "address:platform"
           }
         }
       },
@@ -51,8 +54,11 @@
             "06-lp_token": "nested:str:LPJEXWEGLD-000000",
             "07-lp_token_supply": "biguint:3,000000000000000000",
             "08-owner": "address:owner",
-            "09-volume": "biguint:10000,000000000000000000|biguint:1,500000000000000000",
-            "10-fees": "biguint:50,000000000000000000|biguint:0,500000000000000000"
+            "09-lp_fees": "u32:20",
+            "10-platform_fees": "u32:10",
+            "11-platform_fees_receiver": "u8:1|address:platform",
+            "12-volume": "biguint:10000,000000000000000000|biguint:1,500000000000000000",
+            "13-fees": "biguint:50,000000000000000000|biguint:0,500000000000000000"
           }
         ]
       }

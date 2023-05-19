@@ -22,6 +22,9 @@ pub struct PairStatus<M: ManagedTypeApi> {
     lp_token_identifier: TokenIdentifier<M>,
     lp_token_supply: BigUint<M>,
     owner: ManagedAddress<M>,
+    lp_fees: u32,
+    platform_fees: u32,
+    platform_fees_receiver: Option<ManagedAddress<M>>,
     volume_prev_epoch: [BigUint<M>; 2],
     fees_prev_epoch: [BigUint<M>; 2],
 }
@@ -549,6 +552,12 @@ pub trait JexScPairContract:
         let first_token = self.first_token().get();
         let second_token = self.second_token().get();
 
+        let opt_platform_fees_receiver = if self.platform_fees_receiver().is_empty() {
+            Option::None
+        } else {
+            Option::Some(self.platform_fees_receiver().get())
+        };
+
         let status = PairStatus {
             paused: self.is_paused().get(),
             first_token_identifier: first_token.clone(),
@@ -558,6 +567,9 @@ pub trait JexScPairContract:
             lp_token_identifier: self.lp_token().get(),
             lp_token_supply: self.lp_token_supply().get(),
             owner: self.blockchain().get_owner_address(),
+            lp_fees: self.liq_providers_fees().get(),
+            platform_fees: self.platform_fees().get(),
+            platform_fees_receiver: opt_platform_fees_receiver,
             volume_prev_epoch: [
                 self.trading_volume(epoch, &first_token).get(),
                 self.trading_volume(epoch, &second_token).get(),
