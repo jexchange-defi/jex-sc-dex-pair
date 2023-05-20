@@ -582,9 +582,18 @@ pub trait JexScPairContract:
         status
     }
 
-    #[view(getWrapScAddress)]
-    #[storage_mapper("wrap_sc_address")]
-    fn wrap_sc_address(&self) -> SingleValueMapper<ManagedAddress>;
+    #[view(getAnalyticsForLastEpochs)]
+    fn get_analytics_for_last_epochs(
+        &self,
+        countback: u64,
+    ) -> MultiValueEncoded<Self::Api, analytics::AnalyticsForEpoch<Self::Api>> {
+        let first_token = self.first_token().get();
+        let second_token = self.second_token().get();
+
+        let res = self.get_analytics_for_last_epochs_inner(countback, &first_token, &second_token);
+
+        res.into()
+    }
 
     // callbacks
 

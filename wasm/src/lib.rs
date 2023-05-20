@@ -39,7 +39,7 @@ multiversx_sc_wasm_adapter::endpoints! {
         getFirstToken
         getSecondToken
         getStatus
-        getWrapScAddress
+        getAnalyticsForLastEpochs
         getLpFees
         getTradingVolume
         getLiqProvidersFees

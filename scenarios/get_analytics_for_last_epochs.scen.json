@@ -1,0 +1,78 @@
+{
+  "steps": [
+    {
+      "step": "setState",
+      "accounts": {
+        "sc:pair": {
+          "code": "file:../output/jex-sc-pair.wasm",
+          "storage": {
+            "str:an_lp_fees|u64:331|nested:str:JEX-000000": "31,000000000000000000",
+            "str:an_lp_fees|u64:331|nested:str:WEGLD-000000": "0,310000000000000000",
+            "str:an_lp_fees|u64:332|nested:str:JEX-000000": "32,000000000000000000",
+            "str:an_lp_fees|u64:332|nested:str:WEGLD-000000": "0,320000000000000000",
+            "str:an_lp_fees|u64:333|nested:str:JEX-000000": "33,000000000000000000",
+            "str:an_lp_fees|u64:333|nested:str:WEGLD-000000": "0,330000000000000000",
+            "str:an_t_vol|u64:331|nested:str:JEX-000000": "33111,000000000000000000",
+            "str:an_t_vol|u64:331|nested:str:WEGLD-000000": "3,310000000000000000",
+            "str:an_t_vol|u64:332|nested:str:JEX-000000": "33222,000000000000000000",
+            "str:an_t_vol|u64:332|nested:str:WEGLD-000000": "3,320000000000000000",
+            "str:an_t_vol|u64:333|nested:str:JEX-000000": "33333,000000000000000000",
+            "str:an_t_vol|u64:333|nested:str:WEGLD-000000": "3,330000000000000000",
+            "str:first_token": "str:JEX-000000",
+            "str:second_token": "str:WEGLD-000000"
+          }
+        }
+      },
+      "currentBlockInfo": {
+        "blockEpoch": "334"
+      }
+    },
+    {
+      "step": "scQuery",
+      "tx": {
+        "to": "sc:pair",
+        "function": "getAnalyticsForLastEpochs",
+        "arguments": ["5"]
+      },
+      "expect": {
+        "out": [
+          {
+            "1-epoch": "u64:329",
+            "2-volume_first_token": "biguint:0",
+            "3-volume_second_token": "biguint:0",
+            "4-lp_fees_first_token": "biguint:0",
+            "5-lp_fees_second_token": "biguint:0"
+          },
+          {
+            "1-epoch": "u64:330",
+            "2-volume_first_token": "biguint:0",
+            "3-volume_second_token": "biguint:0",
+            "4-lp_fees_first_token": "biguint:0",
+            "5-lp_fees_second_token": "biguint:0"
+          },
+          {
+            "1-epoch": "u64:331",
+            "2-volume_first_token": "biguint:33111,000000000000000000",
+            "3-volume_second_token": "biguint:3,310000000000000000",
+            "4-lp_fees_first_token": "biguint:31,000000000000000000",
+            "5-lp_fees_second_token": "biguint:0,310000000000000000"
+          },
+          {
+            "1-epoch": "u64:332",
+            "2-volume_first_token": "biguint:33222,000000000000000000",
+            "3-volume_second_token": "biguint:3,320000000000000000",
+            "4-lp_fees_first_token": "biguint:32,000000000000000000",
+            "5-lp_fees_second_token": "biguint:0,320000000000000000"
+          },
+          {
+            "1-epoch": "u64:333",
+            "2-volume_first_token": "biguint:33333,000000000000000000",
+            "3-volume_second_token": "biguint:3,330000000000000000",
+            "4-lp_fees_first_token": "biguint:33,000000000000000000",
+            "5-lp_fees_second_token": "biguint:0,330000000000000000"
+          }
+        ]
+      }
+    }
+  ]
+}
