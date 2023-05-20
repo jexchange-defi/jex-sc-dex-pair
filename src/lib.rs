@@ -10,7 +10,6 @@ mod fees;
 mod liquidity;
 mod pausable;
 mod swap;
-mod wrap_sc_proxy;
 
 #[derive(TopEncode, TopDecode, TypeAbi)]
 pub struct PairStatus<M: ManagedTypeApi> {
@@ -609,9 +608,4 @@ pub trait JexScPairContract:
             }
         }
     }
-
-    // proxies
-
-    #[proxy]
-    fn wrap_sc_proxy(&self, sc_address: ManagedAddress) -> wrap_sc_proxy::Proxy<Self::Api>;
 }
