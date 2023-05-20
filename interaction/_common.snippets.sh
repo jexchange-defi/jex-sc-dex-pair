@@ -128,6 +128,29 @@ removeLiquiditySingle() {
         --proxy=${PROXY} --chain=${CHAIN} --send || return
 }
 
+swapTokensFixedInput() {
+    read -p 'Token: ' TOKEN_IN
+    read -p 'Amount: ' AMOUNT_IN
+    
+    mxpy contract call ${SC_ADDRESS} --recall-nonce --pem=${1} --gas-limit=10000000 \
+        --function="ESDTTransfer" \
+        --arguments "str:${TOKEN_IN}" "${AMOUNT_IN}" \
+                    "str:swapTokensFixedInput" "1" \
+        --proxy=${PROXY} --chain=${CHAIN} --send || return
+}
+
+swapTokensFixedOutput() {
+    read -p 'Token in: ' TOKEN_IN
+    read -p 'Amount in: ' AMOUNT_IN
+    read -p 'Exact amount out: ' AMOUNT_OUT
+    
+    mxpy contract call ${SC_ADDRESS} --recall-nonce --pem=${1} --gas-limit=10000000 \
+        --function="ESDTTransfer" \
+        --arguments "str:${TOKEN_IN}" "${AMOUNT_IN}" \
+                    "str:swapTokensFixedOutput" "${AMOUNT_OUT}" \
+        --proxy=${PROXY} --chain=${CHAIN} --send || return
+}
+
 ##
 # Views
 ##
