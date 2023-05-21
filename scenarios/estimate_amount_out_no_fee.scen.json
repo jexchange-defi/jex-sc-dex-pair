@@ -1,0 +1,44 @@
+{
+  "steps": [
+    {
+      "step": "externalSteps",
+      "path": "add_liquidity_exact.scen.json"
+    },
+    {
+      "step": "scQuery",
+      "tx": {
+        "to": "sc:pair",
+        "function": "estimateAmountOut",
+        "arguments": ["str:JEX-000000", "10000,000000000000000000"]
+      },
+      "expect": {
+        "out": [
+          {
+            "1-net_amount_out": "biguint:0,750000000000000000",
+            "2-amount_out": "biguint:0,750000000000000000",
+            "3-liq_providers_fee": "biguint:0",
+            "4-platform_fee": "biguint:0"
+          }
+        ]
+      }
+    },
+    {
+      "step": "scQuery",
+      "tx": {
+        "to": "sc:pair",
+        "function": "estimateAmountOut",
+        "arguments": ["str:JEX-000000", "3000,000000000000000000"]
+      },
+      "expect": {
+        "out": [
+          {
+            "1-net_amount_out": "biguint:0,272727272727272727",
+            "2-amount_out": "biguint:0,272727272727272727",
+            "3-liq_providers_fee": "biguint:0",
+            "4-platform_fee": "biguint:0"
+          }
+        ]
+      }
+    }
+  ]
+}

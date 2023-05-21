@@ -1,0 +1,31 @@
+{
+  "steps": [
+    {
+      "step": "setState",
+      "accounts": {
+        "address:owner": {
+          "nonce": "1",
+          "balance": "0"
+        },
+        "sc:pair": {
+          "code": "file:../output/jex-sc-pair.wasm",
+          "esdt": {
+            "str:LPJEXWEGLD-000000": {
+              "roles": ["ESDTRoleLocalBurn", "ESDTRoleLocalMint"]
+            }
+          },
+          "owner": "address:owner",
+          "storage": {
+            "str:first_token": "str:JEX-000000",
+            "str:paused": "false",
+            "str:second_token": "str:WEGLD-000000",
+            "str:lp_token": "str:LPJEXWEGLD-000000"
+          }
+        }
+      },
+      "currentBlockInfo": {
+        "blockEpoch": "333"
+      }
+    }
+  ]
+}

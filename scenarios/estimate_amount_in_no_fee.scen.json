@@ -1,0 +1,19 @@
+{
+  "steps": [
+    {
+      "step": "externalSteps",
+      "path": "add_liquidity_exact.scen.json"
+    },
+    {
+      "step": "scQuery",
+      "tx": {
+        "to": "sc:pair",
+        "function": "estimateAmountIn",
+        "arguments": ["str:WEGLD-000000", "1,000000000000000000"]
+      },
+      "expect": {
+        "out": ["biguint:15000,000000000000000000"]
+      }
+    }
+  ]
+}
