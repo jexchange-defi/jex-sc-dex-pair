@@ -2,11 +2,11 @@
 
 PROJECT=..
 PROXY=https://devnet-gateway.multiversx.com
-SC_ADDRESS=$(mxpy data load --key=address-devnet)
+SC_ADDRESS=$(mxpy data load --key=address-devnet-jex-usdc)
 CHAIN=D
 SCRIPT_DIR=$(dirname $0)
 FIRST_TOKEN_ID=XJEX-899465
-SECOND_TOKEN_ID=WEGLD-d7c6bb
+SECOND_TOKEN_ID=USDC-8d4068
 
 source "${SCRIPT_DIR}/_common.snippets.sh"
 
@@ -21,7 +21,7 @@ deploy() {
 
     SC_ADDRESS=$(mxpy data parse --file="deploy-devnet.interaction.json" --expression="data['contractAddress']")
 
-    mxpy data store --key=address-devnet --value=${SC_ADDRESS}
+    mxpy data store --key=address-devnet-jex-usdc --value=${SC_ADDRESS}
 
     echo ""
     echo "Smart contract address: ${SC_ADDRESS}"
