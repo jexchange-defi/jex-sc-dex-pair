@@ -81,11 +81,12 @@ Note: 100 = 1%, 20 = 0.2%
 
 **Add initial liquidity**
 
-Adding initial liquidity will determine the initial exchange rate of tokens.
+Adding initial liquidity will determine the initial exchange rate of tokens **and** the value of 1 LP token.
 
 For example, adding 10,000 JEX and 1 wEGLD:
 
 * initial exchange rate will be 1 wEGLD = 10,000 JEX (1 JEX = 0.0001 wEGLD)
+* 1 LP token will be worth (1 wEGLD + 10,000 JEX)
 
 
 ```shell
