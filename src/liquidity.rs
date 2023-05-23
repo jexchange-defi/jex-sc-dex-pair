@@ -33,7 +33,7 @@ pub trait LiquidityModule {
 
         self.require_enough_liquidity();
 
-        let lp_amount = first_token_amount.min(second_token_amount).clone();
+        let lp_amount = BigUint::from(10u32).pow(18);
 
         let lp_token = self.lp_mint(&lp_amount);
 
