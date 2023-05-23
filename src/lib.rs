@@ -26,6 +26,7 @@ pub struct PairStatus<M: ManagedTypeApi> {
     platform_fees_receiver: Option<ManagedAddress<M>>,
     volume_prev_epoch: [BigUint<M>; 2],
     fees_prev_epoch: [BigUint<M>; 2],
+    fees_last_7_epochs: [BigUint<M>; 2],
 }
 
 #[multiversx_sc::contract]
@@ -550,7 +551,7 @@ pub trait JexScPairContract:
 
     #[view(getStatus)]
     fn get_status(&self) -> PairStatus<Self::Api> {
-        let epoch = self.blockchain().get_block_epoch() - 1u64;
+        let prev_epoch = self.blockchain().get_block_epoch() - 1u64;
 
         let first_token = self.first_token().get();
         let second_token = self.second_token().get();
@@ -560,6 +561,13 @@ pub trait JexScPairContract:
         } else {
             Option::Some(self.platform_fees_receiver().get())
         };
+
+        let mut sum_lp_fees_first = BigUint::zero();
+        let mut sum_lp_fees_second = BigUint::zero();
+        for i in 0u64..=6u64 {
+            sum_lp_fees_first += self.lp_fees(prev_epoch - i, &first_token).get();
+            sum_lp_fees_second += self.lp_fees(prev_epoch - i, &second_token).get();
+        }
 
         let status = PairStatus {
             paused: self.is_paused().get(),
@@ -574,13 +582,14 @@ pub trait JexScPairContract:
             platform_fees: self.platform_fees().get(),
             platform_fees_receiver: opt_platform_fees_receiver,
             volume_prev_epoch: [
-                self.trading_volume(epoch, &first_token).get(),
-                self.trading_volume(epoch, &second_token).get(),
+                self.trading_volume(prev_epoch, &first_token).get(),
+                self.trading_volume(prev_epoch, &second_token).get(),
             ],
             fees_prev_epoch: [
-                self.lp_fees(epoch, &first_token).get(),
-                self.lp_fees(epoch, &second_token).get(),
+                self.lp_fees(prev_epoch, &first_token).get(),
+                self.lp_fees(prev_epoch, &second_token).get(),
             ],
+            fees_last_7_epochs: [sum_lp_fees_first, sum_lp_fees_second],
         };
 
         status
