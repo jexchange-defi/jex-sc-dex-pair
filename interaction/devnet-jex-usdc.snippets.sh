@@ -15,7 +15,7 @@ deploy() {
     read answer
 
     mxpy contract deploy --project=${PROJECT} --metadata-payable \
-        --pem=${1} --gas-limit=150000000 --outfile="deploy-devnet.interaction.json" \
+        --pem=${1} --gas-limit=80000000 --outfile="deploy-devnet.interaction.json" \
         --arguments "str:${FIRST_TOKEN_ID}" "str:${SECOND_TOKEN_ID}" \
         --proxy=${PROXY} --chain=${CHAIN} --recall-nonce --send || return
 
@@ -32,7 +32,7 @@ upgrade() {
     read answer
 
     mxpy contract upgrade --project=${PROJECT} --metadata-payable \
-        --pem=${1} --gas-limit=150000000 --outfile="deploy-devnet.interaction.json" \
+        --pem=${1} --gas-limit=80000000 --outfile="deploy-devnet.interaction.json" \
         --arguments "0x" "0x" \
         --proxy=${PROXY} --chain=${CHAIN} --recall-nonce --send ${SC_ADDRESS} || return
 
