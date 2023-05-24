@@ -1,4 +1,4 @@
-# jex-sc-pair
+# jex-sc-dex-pair
 
 Liquidity pool smart contract with `x*y=k` AMM
 

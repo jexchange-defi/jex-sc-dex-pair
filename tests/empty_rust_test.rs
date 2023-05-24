@@ -1,24 +1,24 @@
-use jex_sc_pair::*;
+use jex_sc_dex_pair::*;
 use multiversx_sc::types::{Address, TokenIdentifier};
 use multiversx_sc_scenario::{rust_biguint, testing_framework::*, DebugApi};
 
-const WASM_PATH: &str = "output/jex-sc-pair.wasm";
+const WASM_PATH: &str = "output/jex-sc-dex-pair.wasm";
 
 struct ContractSetup<ContractObjBuilder>
 where
-    ContractObjBuilder: 'static + Copy + Fn() -> jex_sc_pair::ContractObj<DebugApi>,
+    ContractObjBuilder: 'static + Copy + Fn() -> jex_sc_dex_pair::ContractObj<DebugApi>,
 {
     pub blockchain_wrapper: BlockchainStateWrapper,
     pub owner_address: Address,
     pub contract_wrapper:
-        ContractObjWrapper<jex_sc_pair::ContractObj<DebugApi>, ContractObjBuilder>,
+        ContractObjWrapper<jex_sc_dex_pair::ContractObj<DebugApi>, ContractObjBuilder>,
 }
 
 fn setup_contract<ContractObjBuilder>(
     cf_builder: ContractObjBuilder,
 ) -> ContractSetup<ContractObjBuilder>
 where
-    ContractObjBuilder: 'static + Copy + Fn() -> jex_sc_pair::ContractObj<DebugApi>,
+    ContractObjBuilder: 'static + Copy + Fn() -> jex_sc_dex_pair::ContractObj<DebugApi>,
 {
     let rust_zero = rust_biguint!(0u64);
     let mut blockchain_wrapper = BlockchainStateWrapper::new();
@@ -53,7 +53,7 @@ where
 
 #[test]
 fn deploy_test() {
-    let mut setup = setup_contract(jex_sc_pair::contract_obj);
+    let mut setup = setup_contract(jex_sc_dex_pair::contract_obj);
 
     let jex_id: &[u8] = b"JEX-000000";
     let wegld_id: &[u8] = b"WEGLD-000000";

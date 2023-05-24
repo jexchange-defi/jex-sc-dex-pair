@@ -16,7 +16,7 @@
           }
         },
         "sc:pair": {
-          "code": "file:../output/jex-sc-pair.wasm",
+          "code": "file:../output/jex-sc-dex-pair.wasm",
           "esdt": {
             "str:LPJEXWEGLD-000000": {
               "roles": ["ESDTRoleLocalBurn", "ESDTRoleLocalMint"]

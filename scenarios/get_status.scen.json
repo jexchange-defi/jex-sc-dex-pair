@@ -12,7 +12,7 @@
           "balance": "0"
         },
         "sc:pair": {
-          "code": "file:../output/jex-sc-pair.wasm",
+          "code": "file:../output/jex-sc-dex-pair.wasm",
           "owner": "address:owner",
           "storage": {
             "str:an_lp_fees|u64:331|nested:str:JEX-000000": "31,000000000000000000",

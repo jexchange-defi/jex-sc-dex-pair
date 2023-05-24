@@ -1,5 +1,5 @@
 [package]
-name = "jex-sc-pair-wasm"
+name = "jex-sc-dex-pair-wasm"
 version = "0.0.0"
 edition = "2018"
 publish = false
@@ -20,7 +20,7 @@ lto = true
 debug = false
 panic = "abort"
 
-[dependencies.jex-sc-pair]
+[dependencies.jex-sc-dex-pair]
 path = ".."
 
 [dependencies.multiversx-sc-wasm-adapter]

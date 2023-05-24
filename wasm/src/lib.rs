@@ -16,7 +16,7 @@ multiversx_sc_wasm_adapter::allocator!();
 multiversx_sc_wasm_adapter::panic_handler!();
 
 multiversx_sc_wasm_adapter::endpoints! {
-    jex_sc_pair
+    jex_sc_dex_pair
     (
         issueLpToken
         enableMintBurn

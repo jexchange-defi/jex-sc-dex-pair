@@ -16,7 +16,7 @@ deploy() {
     echo 'You are about to deploy SC on mainnet (Ctrl-C to abort)'
     read answer
 
-    mxpy contract deploy --bytecode ${PROJECT}/output-docker/jex-sc-pair/jex-sc-pair.wasm \
+    mxpy contract deploy --bytecode ${PROJECT}/output-docker/jex-sc-dex-pair/jex-sc-dex-pair.wasm \
          --keyfile=${KEYFILE} --gas-limit=80000000 --outfile="deploy-mainnet.interaction.json" \
          --arguments "str:${JEX_TOKEN_ID}" "str:${WEGLD_TOKEN_ID}" \
          --proxy=${PROXY} --chain=${CHAIN} --recall-nonce --send || return
@@ -33,7 +33,7 @@ upgrade() {
     echo 'You are about to upgrade current SC on mainnet (Ctrl-C to abort)'
     read answer
 
-    mxpy contract upgrade --bytecode ${PROJECT}/output-docker/jex-sc-pair/jex-sc-pair.wasm \
+    mxpy contract upgrade --bytecode ${PROJECT}/output-docker/jex-sc-dex-pair/jex-sc-dex-pair.wasm \
         --keyfile=${KEYFILE} --gas-limit=80000000 --outfile="deploy-mainnet.interaction.json" \
         --arguments "0x" "0x" \
         --proxy=${PROXY} --chain=${CHAIN} --recall-nonce --send ${SC_ADDRESS} || return

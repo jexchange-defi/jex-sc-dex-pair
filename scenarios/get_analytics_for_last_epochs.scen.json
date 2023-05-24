@@ -4,7 +4,7 @@
       "step": "setState",
       "accounts": {
         "sc:pair": {
-          "code": "file:../output/jex-sc-pair.wasm",
+          "code": "file:../output/jex-sc-dex-pair.wasm",
           "storage": {
             "str:an_lp_fees|u64:331|nested:str:JEX-000000": "31,000000000000000000",
             "str:an_lp_fees|u64:331|nested:str:WEGLD-000000": "0,310000000000000000",
