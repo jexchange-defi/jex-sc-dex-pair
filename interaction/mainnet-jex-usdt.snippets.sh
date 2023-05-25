@@ -2,11 +2,11 @@
 
 PROJECT=..
 PROXY=https://gateway.multiversx.com
-SC_ADDRESS=$(mxpy data load --key=address-mainnet-jex-wegld)
+SC_ADDRESS=$(mxpy data load --key=address-mainnet-jex-usdt)
 CHAIN=D
 SCRIPT_DIR=$(dirname $0)
 FIRST_TOKEN_ID=JEX-9040ca
-SECOND_TOKEN_ID=WEGLD-bd4d79
+SECOND_TOKEN_ID=USDT-f8c08c
 
 source "${SCRIPT_DIR}/_common.snippets.sh"
 
@@ -18,12 +18,12 @@ deploy() {
 
     mxpy contract deploy --bytecode ${PROJECT}/output-docker/jex-sc-dex-pair/jex-sc-dex-pair.wasm \
          --keyfile=${KEYFILE} --gas-limit=80000000 --outfile="deploy-mainnet.interaction.json" \
-         --arguments "str:${JEX_TOKEN_ID}" "str:${WEGLD_TOKEN_ID}" \
+         --arguments "str:${FIRST_TOKEN_ID}" "str:${SECOND_TOKEN_ID}" \
          --proxy=${PROXY} --chain=${CHAIN} --recall-nonce --send || return
 
     SC_ADDRESS=$(mxpy data parse --file="deploy-mainnet.interaction.json" --expression="data['contractAddress']")
 
-    mxpy data store --key=address-mainnet-jex-wegld --value=${SC_ADDRESS}
+    mxpy data store --key=address-mainnet-jex-usdt --value=${SC_ADDRESS}
 
     echo ""
     echo "Smart contract address: ${SC_ADDRESS}"
