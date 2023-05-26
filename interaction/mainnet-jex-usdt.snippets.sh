@@ -3,7 +3,7 @@
 PROJECT=..
 PROXY=https://gateway.multiversx.com
 SC_ADDRESS=$(mxpy data load --key=address-mainnet-jex-usdt)
-CHAIN=D
+CHAIN=1
 SCRIPT_DIR=$(dirname $0)
 FIRST_TOKEN_ID=JEX-9040ca
 SECOND_TOKEN_ID=USDT-f8c08c
@@ -17,7 +17,7 @@ deploy() {
     read answer
 
     mxpy contract deploy --bytecode ${PROJECT}/output-docker/jex-sc-dex-pair/jex-sc-dex-pair.wasm \
-         --keyfile=${KEYFILE} --gas-limit=80000000 --outfile="deploy-mainnet.interaction.json" \
+         --keyfile=${1} --gas-limit=80000000 --outfile="deploy-mainnet.interaction.json" \
          --arguments "str:${FIRST_TOKEN_ID}" "str:${SECOND_TOKEN_ID}" \
          --proxy=${PROXY} --chain=${CHAIN} --recall-nonce --send || return
 

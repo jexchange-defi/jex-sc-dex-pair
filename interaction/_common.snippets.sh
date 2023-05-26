@@ -13,9 +13,9 @@ addInitialLiquidity() {
     read -p "Amount (${FIRST_TOKEN_ID}): " AMOUNT_FIRST
     read -p "Amount (${SECOND_TOKEN_ID}): " AMOUNT_SECOND
 
-    USER_ADDRESS=$(mxpy wallet pem-address ${1})
+    USER_ADDRESS=$(cat ${1} | jq -r .bech32)
 
-    mxpy contract call ${USER_ADDRESS} --recall-nonce --pem=${1} --gas-limit=10000000 \
+    mxpy contract call ${USER_ADDRESS} --recall-nonce --keyfile=${1} --gas-limit=10000000 \
         --function="MultiESDTNFTTransfer" \
         --arguments "${SC_ADDRESS}" "2" \
             "str:${FIRST_TOKEN_ID}" "0" "${AMOUNT_FIRST}" \
@@ -27,7 +27,7 @@ addInitialLiquidity() {
 configureLiqProvidersFees() {
     read -p "LP fees (100=1%): " LP_FEES
 
-    mxpy contract call ${SC_ADDRESS} --recall-nonce --pem=${1} --gas-limit=10000000 \
+    mxpy contract call ${SC_ADDRESS} --recall-nonce --keyfile=${1} --gas-limit=10000000 \
         --function="configureLiqProvidersFees" \
         --arguments "${LP_FEES}" \
         --proxy=${PROXY} --chain=${CHAIN} --send || return
@@ -37,14 +37,14 @@ configurePlatformFees() {
     read -p "Platform fees (100=1%): " PLATFORM_FEES
     read -p "Receiver: " FEES_RECEIVER
 
-    mxpy contract call ${SC_ADDRESS} --recall-nonce --pem=${1} --gas-limit=10000000 \
+    mxpy contract call ${SC_ADDRESS} --recall-nonce --keyfile=${1} --gas-limit=10000000 \
         --function="configurePlatformFees" \
         --arguments "${PLATFORM_FEES}" "${FEES_RECEIVER}" \
         --proxy=${PROXY} --chain=${CHAIN} --send || return
 }
 
 enableMintBurn() {
-    mxpy contract call ${SC_ADDRESS} --recall-nonce --pem=${1} --gas-limit=75000000 \
+    mxpy contract call ${SC_ADDRESS} --recall-nonce --keyfile=${1} --gas-limit=75000000 \
         --function="enableMintBurn" \
         --proxy=${PROXY} --chain=${CHAIN} --send || return
 }
@@ -53,7 +53,7 @@ issueLpToken() {
     read -p 'Display name: ' DISPLAY_NAME
     read -p 'Ticker: ' TICKER
 
-    mxpy contract call ${SC_ADDRESS} --recall-nonce --pem=${1} --gas-limit=75000000 \
+    mxpy contract call ${SC_ADDRESS} --recall-nonce --keyfile=${1} --gas-limit=75000000 \
         --function="issueLpToken" \
         --arguments "str:${DISPLAY_NAME}" "str:${TICKER}" \
         --value 50000000000000000 \
@@ -61,13 +61,13 @@ issueLpToken() {
 }
 
 pause() {
-    mxpy contract call ${SC_ADDRESS} --recall-nonce --pem=${1} --gas-limit=75000000 \
+    mxpy contract call ${SC_ADDRESS} --recall-nonce --keyfile=${1} --gas-limit=75000000 \
         --function="pause" \
         --proxy=${PROXY} --chain=${CHAIN} --send || return
 }
 
 unpause() {
-    mxpy contract call ${SC_ADDRESS} --recall-nonce --pem=${1} --gas-limit=75000000 \
+    mxpy contract call ${SC_ADDRESS} --recall-nonce --keyfile=${1} --gas-limit=75000000 \
         --function="unpause" \
         --proxy=${PROXY} --chain=${CHAIN} --send || return
 }
