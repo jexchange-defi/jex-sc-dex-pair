@@ -6,6 +6,7 @@
         "address-mainnet-jex-usdt": "erd1qqqqqqqqqqqqqpgqru6tkedsjjszrkkanctgq9m6rm2ple436avs0qj07m",
         "address-mainnet-jex-wegld": "erd1qqqqqqqqqqqqqpgquenuwz852khuxcau49md27wk2qp03v4s6avsdvmxkc",
         "address-mainnet-jiusdt-usdt": "erd1qqqqqqqqqqqqqpgqql7m4r362c5wrwgdvms3dt9xnxcgq9vt6avsru7w46",
-        "address-mainnet-eth-btc": "erd1qqqqqqqqqqqqqpgqpa3pdmemt5l2ex80g7pksr2ettt955d66avsz76hyt"
+        "address-mainnet-eth-btc": "erd1qqqqqqqqqqqqqpgqpa3pdmemt5l2ex80g7pksr2ettt955d66avsz76hyt",
+        "address-mainnet-jex-eth": "erd1qqqqqqqqqqqqqpgq5nmzpdkpr6c5q894f553n49t0uc67vc96avsxgjl3v"
     }
 }
