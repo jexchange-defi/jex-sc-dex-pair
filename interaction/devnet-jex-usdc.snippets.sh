@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECT=..
+BYTECODE=../output/jex-sc-dex-pair.wasm
 PROXY=https://devnet-gateway.multiversx.com
 SC_ADDRESS=$(mxpy data load --key=address-devnet-jex-usdc)
 CHAIN=D
@@ -14,7 +14,7 @@ deploy() {
     echo 'You are about to deploy SC on devnet (Ctrl-C to abort)'
     read answer
 
-    mxpy contract deploy --project=${PROJECT} --metadata-payable \
+    mxpy contract deploy --bytecode=${BYTECODE} --metadata-payable \
         --pem=${1} --gas-limit=80000000 --outfile="deploy-devnet.interaction.json" \
         --arguments "str:${FIRST_TOKEN_ID}" "str:${SECOND_TOKEN_ID}" \
         --proxy=${PROXY} --chain=${CHAIN} --recall-nonce --send || return
@@ -31,7 +31,7 @@ upgrade() {
     echo 'You are about to upgrade current SC on devnet (Ctrl-C to abort)'
     read answer
 
-    mxpy contract upgrade --project=${PROJECT} --metadata-payable \
+    mxpy contract upgrade --bytecode=${BYTECODE} --metadata-payable \
         --pem=${1} --gas-limit=80000000 --outfile="deploy-devnet.interaction.json" \
         --arguments "0x" "0x" \
         --proxy=${PROXY} --chain=${CHAIN} --recall-nonce --send ${SC_ADDRESS} || return
