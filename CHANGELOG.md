@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - remove minimum liquidity check after a swap
+- owner can remove last liquidity
 
 ## [0.3.0] - 2023-05-13
 
