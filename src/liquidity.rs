@@ -241,9 +241,6 @@ pub trait LiquidityModule {
 
         in_reserve_mapper.update(|x| *x += amount_in);
         out_reserve_mapper.update(|x| *x -= amount_out);
-
-        // prevent draining all of one reserve
-        self.require_enough_liquidity();
     }
 
     fn require_enough_liquidity(&self) {
