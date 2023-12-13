@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - remove minimum liquidity check after a swap
 - owner can remove last liquidity
+- upgrade to `sdk-rs 0.45.1`
 
 ## [0.3.0] - 2023-05-13
 
