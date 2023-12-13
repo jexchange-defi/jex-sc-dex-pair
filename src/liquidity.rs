@@ -220,7 +220,9 @@ pub trait LiquidityModule {
             .update(|x| *x -= &exact_second_token_amount);
 
         // prevent removing all liquidity
-        self.require_enough_liquidity();
+        if self.blockchain().get_caller() != self.blockchain().get_owner_address() {
+            self.require_enough_liquidity();
+        }
 
         self.lp_burn(&lp_amount);
 
@@ -241,9 +243,6 @@ pub trait LiquidityModule {
 
         in_reserve_mapper.update(|x| *x += amount_in);
         out_reserve_mapper.update(|x| *x -= amount_out);
-
-        // prevent draining all of one reserve
-        self.require_enough_liquidity();
     }
 
     fn require_enough_liquidity(&self) {
