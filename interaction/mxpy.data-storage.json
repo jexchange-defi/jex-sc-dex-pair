@@ -7,8 +7,10 @@
         "address-mainnet-jex-wegld": "erd1qqqqqqqqqqqqqpgquenuwz852khuxcau49md27wk2qp03v4s6avsdvmxkc",
         "address-mainnet-jiusdt-usdt": "erd1qqqqqqqqqqqqqpgqql7m4r362c5wrwgdvms3dt9xnxcgq9vt6avsru7w46",
         "address-mainnet-eth-btc": "erd1qqqqqqqqqqqqqpgqpa3pdmemt5l2ex80g7pksr2ettt955d66avsz76hyt",
+        "address-mainnet-jacket-coat": "erd1qqqqqqqqqqqqqpgqssrazqtvzeku9570tpc0x5qr3vdzgdar6avsf4n3j5",
         "address-mainnet-jex-eth": "erd1qqqqqqqqqqqqqpgq5nmzpdkpr6c5q894f553n49t0uc67vc96avsxgjl3v",
         "address-mainnet-jex-bee": "erd1qqqqqqqqqqqqqpgq5c3q0p6lw2lltlpqnlv8gelmlk8wt7kk6avsagmnss",
-        "address-mainnet-jex-rare": "erd1qqqqqqqqqqqqqpgqhrm4x0f20q2ftdyzpkfsftpchme5ute06avs3h2gk7"
+        "address-mainnet-jex-rare": "erd1qqqqqqqqqqqqqpgqhrm4x0f20q2ftdyzpkfsftpchme5ute06avs3h2gk7",
+        "address-devnet-jex-fungus": "erd1qqqqqqqqqqqqqpgqwceeegw8mr2acvhgzwyuakjvhl6ha6r36avsftm4yq"
     }
 }
