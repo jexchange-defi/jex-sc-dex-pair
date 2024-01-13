@@ -24,6 +24,7 @@
           },
           "owner": "address:owner",
           "storage": {
+            "str:can_change_fees": "true",
             "str:first_token": "str:JEX-000000",
             "str:second_token": "str:WEGLD-000000",
             "str:lp_token": "str:LPJEXWEGLD-000000"

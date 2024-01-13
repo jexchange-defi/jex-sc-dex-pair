@@ -5,9 +5,9 @@
 ////////////////////////////////////////////////////
 
 // Init:                                 1
-// Endpoints:                           32
+// Endpoints:                           34
 // Async Callback:                       1
-// Total number of exported functions:  34
+// Total number of exported functions:  36
 
 #![no_std]
 #![allow(internal_features)]
@@ -20,6 +20,7 @@ multiversx_sc_wasm_adapter::endpoints! {
     jex_sc_dex_pair
     (
         init => init
+        upgrade => upgrade
         issueLpToken => issue_lp_token
         enableMintBurn => enable_mint_burn
         addInitialLiquidity => add_initial_liquidity
@@ -44,6 +45,7 @@ multiversx_sc_wasm_adapter::endpoints! {
         getAnalyticsForLastEpochs => get_analytics_for_last_epochs
         getLpFees => lp_fees
         getTradingVolume => trading_volume
+        canChangeFees => can_change_fees
         getLiqProvidersFees => liq_providers_fees
         getPlatformFees => platform_fees
         getPlatformFeesReceiver => platform_fees_receiver

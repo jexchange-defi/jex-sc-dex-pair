@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0]
+
+### Added
+
+- add fees configuration at deployment
+- add `can_change_fees` flag at deployment
+
+### Changed
+
+- upgrade to `sdk-rs 0.45.2`
+
 ## [0.4.0] - 2023-12-13
 
 ### Changed

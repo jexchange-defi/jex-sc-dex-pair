@@ -38,12 +38,32 @@ pub trait JexScPairContract:
     + swap::SwapModule
 {
     #[init]
-    fn init(&self, first_token: TokenIdentifier, second_token: TokenIdentifier) {
+    fn init(
+        &self,
+        first_token: TokenIdentifier,
+        second_token: TokenIdentifier,
+        lp_fees: u32,
+        platform_fees: u32,
+        platform_fees_receiver: ManagedAddress,
+        can_change_fees: bool,
+    ) {
         self.first_token().set_if_empty(&first_token);
+
         self.second_token().set_if_empty(&second_token);
+
+        self.liq_providers_fees().set(lp_fees);
+
+        self.platform_fees().set(platform_fees);
+
+        self.platform_fees_receiver().set(&platform_fees_receiver);
+
+        self.can_change_fees().set(&can_change_fees);
 
         self.do_pause();
     }
+
+    #[upgrade]
+    fn upgrade(&self) {}
 
     // owner endpoints
 
@@ -128,6 +148,8 @@ pub trait JexScPairContract:
     #[only_owner]
     #[endpoint(configureLiqProvidersFees)]
     fn configure_liq_providers_fees(&self, fees: u32) {
+        self.require_can_change_fees();
+
         self.liq_providers_fees().set(fees);
     }
 
@@ -136,6 +158,8 @@ pub trait JexScPairContract:
     #[only_owner]
     #[endpoint(configurePlatformFees)]
     fn configure_platform_fees(&self, fees: u32, receiver: ManagedAddress) {
+        self.require_can_change_fees();
+
         self.platform_fees().set(fees);
         self.platform_fees_receiver().set(&receiver);
     }

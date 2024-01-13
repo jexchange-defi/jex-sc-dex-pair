@@ -14,6 +14,10 @@ pub trait FeesModule {
         fee
     }
 
+    fn require_can_change_fees(&self) {
+        require!(self.can_change_fees().get(), "Cannot change fees");
+    }
+
     fn send_platform_fee(&self, token: &TokenIdentifier, fee: &BigUint) {
         if fee > &0 {
             self.send()
@@ -29,6 +33,10 @@ pub trait FeesModule {
     }
 
     // storage & views
+
+    #[view(canChangeFees)]
+    #[storage_mapper("can_change_fees")]
+    fn can_change_fees(&self) -> SingleValueMapper<bool>;
 
     #[view(getLiqProvidersFees)]
     #[storage_mapper("liq_providers_fees")]
