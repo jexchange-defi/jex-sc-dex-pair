@@ -1,6 +1,7 @@
 {
     "*": {
         "address-devnet-jex-wegld": "erd1qqqqqqqqqqqqqpgq5eslt72e05ueujmzz96rwj8ken9zd9t8ftysfwnqye",
+        "address-devnet-template-for-deployer": "erd1qqqqqqqqqqqqqpgqpq37hm5edvruzl8kyvmjdelhpd6k0xkp6avs385hnf",
         "address-mainnet": "",
         "address-devnet-jex-usdc": "erd1qqqqqqqqqqqqqpgqaltl3jlzm9gpdlwj0vtzvgfeskzga8z0ftys6hel8l",
         "address-mainnet-jex-usdt": "erd1qqqqqqqqqqqqqpgqru6tkedsjjszrkkanctgq9m6rm2ple436avs0qj07m",

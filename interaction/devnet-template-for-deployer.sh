@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BYTECODE=../output/jex-sc-dex-pair.wasm
+BYTECODE=../output-docker/jex-sc-dex-pair/jex-sc-dex-pair.wasm
 PROXY=https://devnet-gateway.multiversx.com
 SC_ADDRESS=$(mxpy data load --key=address-devnet-template-for-deployer)
 CHAIN=D
@@ -19,7 +19,7 @@ deploy() {
         --arguments "0x" "0x" "0" "0" "erd1272et87h3sa7hlg5keuswh50guz2ngmd6lhmjxkwwu0ah6gdds5qhka964" "false" \
         --proxy=${PROXY} --chain=${CHAIN} --recall-nonce --send || return
 
-    SC_ADDRESS=$(mxpy data parse --file="deploy-devnet.interaction.json" --expression="data['contractAddress']")
+    SC_ADDRESS=$(cat deploy-devnet.interaction.json | jq -r .contractAddress)
 
     mxpy data store --key=address-devnet-template-for-deployer --value=${SC_ADDRESS}
 
