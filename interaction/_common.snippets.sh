@@ -67,7 +67,7 @@ pause() {
 }
 
 unpause() {
-    mxpy contract call ${SC_ADDRESS} --recall-nonce --keyfile=${1} --gas-limit=75000000 \
+    mxpy contract call ${SC_ADDRESS} --recall-nonce --keyfile=${1} --gas-limit=20000000 \
         --function="unpause" \
         --proxy=${PROXY} --chain=${CHAIN} --send || return
 }

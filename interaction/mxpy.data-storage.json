@@ -13,6 +13,7 @@
         "address-mainnet-jex-bee": "erd1qqqqqqqqqqqqqpgq5c3q0p6lw2lltlpqnlv8gelmlk8wt7kk6avsagmnss",
         "address-mainnet-jex-rare": "erd1qqqqqqqqqqqqqpgqhrm4x0f20q2ftdyzpkfsftpchme5ute06avs3h2gk7",
         "address-devnet-jex-fungus": "erd1qqqqqqqqqqqqqpgqwceeegw8mr2acvhgzwyuakjvhl6ha6r36avsftm4yq",
-        "address-mainnet-eth-egld": "erd1qqqqqqqqqqqqqpgq9xrlefh7w7346fdv6ggusufawe5aqg446avsl6xfqd"
+        "address-mainnet-eth-egld": "erd1qqqqqqqqqqqqqpgq9xrlefh7w7346fdv6ggusufawe5aqg446avsl6xfqd",
+        "address-mainnet-template-for-deployer": "erd1qqqqqqqqqqqqqpgq3cmrx296ujn6ruh9afppd8pq5ef4ps4t6avsyj927s"
     }
 }
