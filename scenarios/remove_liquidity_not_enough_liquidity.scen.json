@@ -25,7 +25,7 @@
         "esdtValue": [
           {
             "tokenIdentifier": "str:LPJEXWEGLD-000000",
-            "value": "2,999999999999999000"
+            "value": "2,999999999999999900"
           }
         ],
         "arguments": ["29999,000000000000000000", "2,990000000000000000"],
@@ -34,7 +34,7 @@
       },
       "expect": {
         "status": "4",
-        "message": "str:Not enough liquidity for second token",
+        "message": "str:Not enough LP token supply",
         "gas": "*",
         "refund": "*"
       }
