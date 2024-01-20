@@ -1,0 +1,105 @@
+{
+  "steps": [
+    {
+      "step": "externalSteps",
+      "path": "add_liquidity_exact.scen.json"
+    },
+    {
+      "step": "setState",
+      "accounts": {
+        "address:user": {
+          "nonce": "0",
+          "balance": "0",
+          "esdt": {
+            "str:LPJEXWEGLD-000000": "0,500000000000000000"
+          }
+        },
+        "sc:pair": {
+          "code": "file:../output/jex-sc-dex-pair.wasm",
+          "esdt": {
+            "str:JEX-000000": "30000,000000000000000000",
+            "str:WEGLD-000000": "3",
+            "str:LPJEXWEGLD-000000": {
+              "instances": [
+                {
+                  "nonce": "0",
+                  "balance": ""
+                }
+              ],
+              "roles": ["ESDTRoleLocalBurn", "ESDTRoleLocalMint"]
+            }
+          },
+          "storage": {
+            "str:can_change_fees": "true",
+            "str:first_token": "str:JEX-000000",
+            "str:first_token_reserve": "30000,000000000000000000",
+            "str:paused": "false",
+            "str:lp_token": "str:LPJEXWEGLD-000000",
+            "str:lp_token_supply": "3,000000000000000000",
+            "str:second_token": "str:WEGLD-000000",
+            "str:second_token_reserve": "3"
+          }
+        }
+      }
+    },
+    {
+      "step": "scCall",
+      "tx": {
+        "from": "address:user",
+        "to": "sc:pair",
+        "function": "removeLiquidity",
+        "esdtValue": [
+          {
+            "tokenIdentifier": "str:LPJEXWEGLD-000000",
+            "value": "0,500000000000000000"
+          }
+        ],
+        "arguments": ["0", "0"],
+        "gasLimit": "10,000,000",
+        "gasPrice": "0"
+      },
+      "expect": {
+        "status": "0",
+        "message": "",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "checkState",
+      "accounts": {
+        "address:user": {
+          "balance": "0",
+          "nonce": "1",
+          "esdt": {
+            "str:JEX-000000": "5000,000000000000000000",
+            "str:WEGLD-000000": "0"
+          }
+        },
+        "sc:pair": {
+          "code": "*",
+          "esdt": {
+            "str:JEX-000000": "25000,000000000000000000",
+            "str:WEGLD-000000": "3",
+            "str:LPJEXWEGLD-000000": {
+              "instances": [
+                {
+                  "nonce": "0",
+                  "balance": ""
+                }
+              ],
+              "roles": ["ESDTRoleLocalBurn", "ESDTRoleLocalMint"]
+            }
+          },
+          "storage": {
+            "str:first_token_reserve": "25000,000000000000000000",
+            "str:second_token_reserve": "3",
+            "str:lp_token_supply": "2,500000000000000000",
+            "+": ""
+          }
+        },
+        "+": ""
+      }
+    }
+  ]
+}

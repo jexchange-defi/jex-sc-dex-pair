@@ -272,18 +272,23 @@ pub trait JexScPairContract:
         );
 
         let caller = self.blockchain().get_caller();
-        self.send().direct_esdt(
-            &caller,
-            &self.first_token().get(),
-            0,
-            &exact_first_token_amount,
-        );
-        self.send().direct_esdt(
-            &caller,
-            &self.second_token().get(),
-            0,
-            &exact_second_token_amount,
-        );
+        if &exact_first_token_amount > &0 {
+            self.send().direct_esdt(
+                &caller,
+                &self.first_token().get(),
+                0,
+                &exact_first_token_amount,
+            );
+        }
+
+        if &exact_second_token_amount > &0 {
+            self.send().direct_esdt(
+                &caller,
+                &self.second_token().get(),
+                0,
+                &exact_second_token_amount,
+            );
+        }
     }
 
     /// Remove liquidity and swap one half to desired token in 1 transaction
