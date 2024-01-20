@@ -1,0 +1,24 @@
+{
+  "steps": [
+    {
+      "step": "externalSteps",
+      "path": "add_liquidity_exact.scen.json"
+    },
+    {
+      "step": "scQuery",
+      "tx": {
+        "to": "sc:pair",
+        "function": "estimateRemoveLiquidity",
+        "arguments": ["3,000000000000000000"]
+      },
+      "expect": {
+        "out": [
+          {
+            "1-eq_first_tokens": "biguint:30000,000000000000000000",
+            "2-eq_second_tokens": "biguint:3,000000000000000000"
+          }
+        ]
+      }
+    }
+  ]
+}

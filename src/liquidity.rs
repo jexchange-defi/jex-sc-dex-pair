@@ -181,7 +181,7 @@ pub trait LiquidityModule {
     ) -> EstimateRemoveLiquidityOut<Self::Api> {
         let lp_supply = self.lp_token_supply().get();
 
-        require!(lp_amount < &lp_supply, "Cannot remove that much liquidity");
+        require!(lp_amount <= &lp_supply, "Cannot remove that much liquidity");
 
         let eq_first_tokens = (self.first_token_reserve().get() * lp_amount) / &lp_supply;
 
