@@ -7,15 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **BREAKING:** `addLiquidity` now takes minimum amount for both tokens
+
 ## [0.6.2]
 
-## Fixed
+### Fixed
 
 - Fix `estimateRemoveLiquidity` with all liquidity
 
 ## [0.6.1]
 
-## Fixed
+### Fixed
 
 - Fix liquidity removal with 0 tokens expected
 
