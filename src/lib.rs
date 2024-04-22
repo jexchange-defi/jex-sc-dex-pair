@@ -182,7 +182,7 @@ pub trait JexScPairContract:
     /// Note: liquidity can be added if SC is paused
     #[payable("*")]
     #[endpoint(addLiquidity)]
-    fn add_liquidity(&self, min_second_token_amount: BigUint) {
+    fn add_liquidity(&self, min_first_token_amount: BigUint, min_second_token_amount: BigUint) {
         let [first_payment, second_payment] = self.call_value().multi_esdt();
 
         require!(
@@ -196,14 +196,25 @@ pub trait JexScPairContract:
             "Invalid payment for second token"
         );
 
-        let (lp_amount, lp_token, overpaid_second_token_amount) = self.lp_add_liquidity(
-            &first_payment.amount,
-            &min_second_token_amount,
-            &second_payment.amount,
-        );
+        let (lp_amount, lp_token, overpaid_first_token_amount, overpaid_second_token_amount) = self
+            .lp_add_liquidity(
+                &min_first_token_amount,
+                &first_payment.amount,
+                &min_second_token_amount,
+                &second_payment.amount,
+            );
 
         let caller = self.blockchain().get_caller();
         self.send().direct_esdt(&caller, &lp_token, 0, &lp_amount);
+
+        if overpaid_first_token_amount > 0 {
+            self.send().direct_esdt(
+                &caller,
+                &first_payment.token_identifier,
+                first_payment.token_nonce,
+                &overpaid_first_token_amount,
+            );
+        }
 
         if overpaid_second_token_amount > 0 {
             self.send().direct_esdt(

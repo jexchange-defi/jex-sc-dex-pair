@@ -49,42 +49,75 @@ pub trait LiquidityModule {
 
     fn lp_add_liquidity(
         &self,
-        exact_first_token_amount: &BigUint,
+        min_first_token_amount: &BigUint,
+        max_first_token_amount: &BigUint,
         min_second_token_amount: &BigUint,
         max_second_token_amount: &BigUint,
-    ) -> (BigUint, TokenIdentifier, BigUint) {
+    ) -> (BigUint, TokenIdentifier, BigUint, BigUint) {
         require!(
             !self.lp_token_supply().is_empty(),
             "Initial liquidity is not set"
         );
 
-        let first_token_reserve = self.first_token_reserve().get();
-
-        let exact_second_token_amount =
-            exact_first_token_amount * &self.second_token_reserve().get() / &first_token_reserve;
+        require!(
+            min_first_token_amount <= max_first_token_amount,
+            "Not enough first tokens"
+        );
 
         require!(
-            &exact_second_token_amount <= max_second_token_amount,
+            min_second_token_amount <= max_second_token_amount,
             "Not enough second tokens"
         );
-        require!(
-            &exact_second_token_amount >= min_second_token_amount,
-            "Max slippage exceeded"
-        );
+
+        let first_token_reserve = self.first_token_reserve().get();
+
+        let exact_second_token_amount = max_first_token_amount.clone()
+            * self.second_token_reserve().get()
+            / first_token_reserve.clone();
+
+        let (added_first_token, added_second_token) =
+            if &exact_second_token_amount <= max_second_token_amount {
+                require!(
+                    &exact_second_token_amount >= min_second_token_amount,
+                    "Max slippage exceeded"
+                );
+
+                (max_first_token_amount.clone(), exact_second_token_amount)
+            } else {
+                let second_token_reserve = self.second_token_reserve().get();
+
+                let exact_first_token_amount = max_second_token_amount.clone()
+                    * self.first_token_reserve().get()
+                    / second_token_reserve.clone();
+
+                require!(
+                    &exact_first_token_amount >= min_first_token_amount,
+                    "Max slippage exceeded"
+                );
+
+                (exact_first_token_amount, max_second_token_amount.clone())
+            };
 
         self.first_token_reserve()
-            .update(|x| *x += exact_first_token_amount);
+            .update(|x| *x += added_first_token.clone());
         self.second_token_reserve()
-            .update(|x| *x += &exact_second_token_amount);
+            .update(|x| *x += added_second_token.clone());
 
         let lp_amount =
-            exact_first_token_amount * &self.lp_token_supply().get() / &first_token_reserve;
+            added_first_token.clone() * self.lp_token_supply().get() / first_token_reserve;
 
         let lp_token = self.lp_mint(&lp_amount);
 
-        let overpaid_second_token_amount = max_second_token_amount - &exact_second_token_amount;
+        let overpaid_first_token_amount = max_first_token_amount.clone() - added_first_token;
 
-        (lp_amount, lp_token, overpaid_second_token_amount)
+        let overpaid_second_token_amount = max_second_token_amount.clone() - added_second_token;
+
+        (
+            lp_amount,
+            lp_token,
+            overpaid_first_token_amount,
+            overpaid_second_token_amount,
+        )
     }
 
     fn lp_add_liquidity_single_side(
